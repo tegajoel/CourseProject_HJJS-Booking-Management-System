@@ -11,5 +11,9 @@ public interface LessonRepository {
      */
     List<Lesson> getAllLessons();
 
+    /**
+     * Add a new lesson to the repository
+     * @param lesson lesson to be added
+     */
     void addNewLesson(Lesson lesson);
 }

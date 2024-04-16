@@ -4,7 +4,6 @@ import domain.entity.Coach;
 import domain.entity.Learner;
 import domain.entity.lesson.Lesson;
 import domain.entity.lesson.LessonStatus;
-import domain.entity.lesson.RegisteredLesson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,29 +16,24 @@ class BookLessonUseCaseTest {
     private Learner learner;
     private Lesson testLesson;
     private final String validPhoneNumber = "08012345680";
+    private final int passingTestGrade = 3;
 
     @BeforeEach
     void setUp() {
         sut = new BookLessonUseCase();
-        learner = new Learner("John doe", "Male", 5, 5, validPhoneNumber, validPhoneNumber);
+        learner = new Learner("John doe", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
         Coach coach = new Coach("Peter");
-        testLesson = new Lesson("Diving", 4, coach, LocalDate.now());
+        testLesson = new Lesson("Diving", passingTestGrade, coach, LocalDate.now());
         coach.assignLesson(testLesson);
     }
 
     @Test
     public void bookLesson_sameGrade_succeeds() {
-        testLesson.setGrade(3);
-        learner.setGrade(3);
-
         assertTrue(sut.execute(testLesson, learner).isSuccess());
     }
 
     @Test
     public void bookLesson_succeeds_leanerAddedToLesson() {
-        testLesson.setGrade(3);
-        learner.setGrade(3);
-
         sut.execute(testLesson, learner);
 
         assertTrue(testLesson.getRegisteredLearners().contains(learner));
@@ -47,9 +41,6 @@ class BookLessonUseCaseTest {
 
     @Test
     public void bookLesson_succeeds_lessonAddedToLearner() {
-        testLesson.setGrade(3);
-        learner.setGrade(3);
-
         sut.execute(testLesson, learner);
 
         assertTrue(learner.hasLessonRegistered(testLesson));
@@ -57,9 +48,6 @@ class BookLessonUseCaseTest {
 
     @Test
     public void bookLesson_succeeds_hasInitialLessonStatusAsBooked() {
-        testLesson.setGrade(3);
-        learner.setGrade(3);
-
         sut.execute(testLesson, learner);
 
         assertEquals(LessonStatus.BOOKED, learner.getLessonStatus(testLesson));
@@ -125,11 +113,11 @@ class BookLessonUseCaseTest {
 
     @Test
     public void bookLesson_fullyBookedLesson_fails() {
-        Learner learner1 = new Learner("John doe", "Male", 5, 3, validPhoneNumber, validPhoneNumber);
-        Learner learner2 = new Learner("John doe2", "Male", 5, 3, validPhoneNumber, validPhoneNumber);
-        Learner learner3 = new Learner("John doe3", "Male", 5, 3, validPhoneNumber, validPhoneNumber);
-        Learner learner4 = new Learner("John doe4", "Male", 5, 3, validPhoneNumber, validPhoneNumber);
-        Learner learner5 = new Learner("John doe5", "Male", 5, 3, validPhoneNumber, validPhoneNumber);
+        Learner learner1 = new Learner("John doe", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
+        Learner learner2 = new Learner("John doe2", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
+        Learner learner3 = new Learner("John doe3", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
+        Learner learner4 = new Learner("John doe4", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
+        Learner learner5 = new Learner("John doe5", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
 
         sut.execute(testLesson, learner1);
         sut.execute(testLesson, learner2);
@@ -141,11 +129,11 @@ class BookLessonUseCaseTest {
 
     @Test
     public void bookLesson_fullyBookedLesson_failsWithCorrectError() {
-        Learner learner1 = new Learner("John doe", "Male", 5, 3, validPhoneNumber, validPhoneNumber);
-        Learner learner2 = new Learner("John doe2", "Male", 5, 3, validPhoneNumber, validPhoneNumber);
-        Learner learner3 = new Learner("John doe3", "Male", 5, 3, validPhoneNumber, validPhoneNumber);
-        Learner learner4 = new Learner("John doe4", "Male", 5, 3, validPhoneNumber, validPhoneNumber);
-        Learner learner5 = new Learner("John doe5", "Male", 5, 3, validPhoneNumber, validPhoneNumber);
+        Learner learner1 = new Learner("John doe", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
+        Learner learner2 = new Learner("John doe2", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
+        Learner learner3 = new Learner("John doe3", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
+        Learner learner4 = new Learner("John doe4", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
+        Learner learner5 = new Learner("John doe5", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
 
         sut.execute(testLesson, learner1);
         sut.execute(testLesson, learner2);
@@ -159,23 +147,19 @@ class BookLessonUseCaseTest {
 
     @Test
     public void bookLesson_fullyBookedLessonWithOneCancelled_succeeds() {
-        Learner learner1 = new Learner("John doe", "Male", 5, 3, validPhoneNumber, validPhoneNumber);
-        Learner learner2 = new Learner("John doe2", "Male", 5, 3, validPhoneNumber, validPhoneNumber);
-        Learner learner3 = new Learner("John doe3", "Male", 5, 3, validPhoneNumber, validPhoneNumber);
-        Learner learner4 = new Learner("John doe4", "Male", 5, 3, validPhoneNumber, validPhoneNumber);
-        Learner learner5 = new Learner("John doe5", "Male", 5, 3, validPhoneNumber, validPhoneNumber);
+        Learner learner1 = new Learner("John doe", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
+        Learner learner2 = new Learner("John doe2", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
+        Learner learner3 = new Learner("John doe3", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
+        Learner learner4 = new Learner("John doe4", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
+        Learner learner5 = new Learner("John doe5", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
 
         sut.execute(testLesson, learner1);
         sut.execute(testLesson, learner2);
         sut.execute(testLesson, learner3);
         sut.execute(testLesson, learner4);
 
-        for (RegisteredLesson lesson : learner5.getRegisteredLessons()) {
-            if (lesson.getLesson().equals(testLesson)) {
-                lesson.setLessonStatus(LessonStatus.CANCELLED);
-            }
-        }
+        learner5.updateRegisteredLessonStatus(testLesson, LessonStatus.CANCELLED);
 
-        assertTrue(sut.execute(testLesson, learner5).isSuccess());
+        assertFalse(sut.execute(testLesson, learner5).isSuccess());
     }
 }

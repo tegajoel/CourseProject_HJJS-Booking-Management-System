@@ -111,6 +111,14 @@ public class Learner {
     }
 
     /**
+     * Register a new lesson
+     * @param lesson registered lesson
+     */
+    public void registerNewLesson(RegisteredLesson lesson){
+        registeredLessons.add(lesson);
+    }
+
+    /**
      * Check if a user has registered for a lesson
      *
      * @param lesson lesson

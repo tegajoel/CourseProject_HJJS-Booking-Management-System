@@ -15,26 +15,25 @@ class RegisterNewLearnerUseCaseTest {
     private RegisterNewLearnerUseCase sut;
     private LearnersRepositoryMock repository;
 
-    private String validPhoneNumber= "08012345680";
-
     private Learner validLearner;
 
     @BeforeEach
     void setUp() {
         repository = new LearnersRepositoryMock();
         sut = new RegisterNewLearnerUseCase(repository);
+        String validPhoneNumber = "08012345680";
         validLearner = new Learner("John doe", "Male", 5, 5, validPhoneNumber, validPhoneNumber);
     }
 
     @Test
-    public void addValidLearner_successReturned(){
+    public void addValidLearner_successReturned() {
         Result<Object, RegisterNewLearnerUseCase.Error> result = sut.execute(validLearner);
 
         assertTrue(result.isSuccess());
     }
 
     @Test
-    public void addValidLearner_repositoryIncremented(){
+    public void addValidLearner_repositoryIncremented() {
         int currentRepoSize = repository.size();
         sut.execute(validLearner);
 
@@ -42,14 +41,16 @@ class RegisterNewLearnerUseCaseTest {
     }
 
     @Test
-    public void addLearner_onSuccess_leanerIDAssigned(){
+    public void addLearner_onSuccess_leanerIDAssigned() {
         sut.execute(validLearner);
 
-        assertDoesNotThrow(() -> {validLearner.getId();});
+        assertDoesNotThrow(() -> {
+            validLearner.getId();
+        });
     }
 
     @Test
-    public void addLearner_invalidAge_errorReturned(){
+    public void addLearner_invalidAge_errorReturned() {
         Learner learner = validLearner;
         learner.setAge(60);
 
@@ -59,7 +60,7 @@ class RegisterNewLearnerUseCaseTest {
     }
 
     @Test
-    public void addInvalidLearner_repositorySizeSame(){
+    public void addInvalidLearner_repositorySizeSame() {
         int currentRepoSize = repository.size();
         Learner invalidLEarner = validLearner;
         invalidLEarner.setAge(60);
@@ -69,7 +70,7 @@ class RegisterNewLearnerUseCaseTest {
     }
 
     @Test
-    public void addLearner_invalidGrade_errorReturned(){
+    public void addLearner_invalidGrade_errorReturned() {
         Learner learner = validLearner;
         learner.setGrade(6);
 
@@ -79,7 +80,7 @@ class RegisterNewLearnerUseCaseTest {
     }
 
     @Test
-    public void addLearner_invalidPhoneNumber_errorReturned(){
+    public void addLearner_invalidPhoneNumber_errorReturned() {
         Learner learner = validLearner;
         learner.setPhoneNumber("");
 
@@ -89,7 +90,7 @@ class RegisterNewLearnerUseCaseTest {
     }
 
     @Test
-    public void addLearner_invalidEmergencyNumber_errorReturned(){
+    public void addLearner_invalidEmergencyNumber_errorReturned() {
         Learner learner = validLearner;
         learner.setEmergencyContactNumber("");
 
@@ -99,12 +100,9 @@ class RegisterNewLearnerUseCaseTest {
     }
 
 
-
-
-
-
-    private static class LearnersRepositoryMock implements LearnerRepository{
+    private static class LearnersRepositoryMock implements LearnerRepository {
         private final List<Learner> learners = new ArrayList<>();
+
         @Override
         public boolean addNewLearner(Learner learner) {
             learners.add(learner);
@@ -121,7 +119,7 @@ class RegisterNewLearnerUseCaseTest {
             return null;
         }
 
-        public int size(){
+        public int size() {
             return learners.size();
         }
     }

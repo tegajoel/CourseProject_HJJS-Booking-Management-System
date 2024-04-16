@@ -8,14 +8,14 @@ import java.util.List;
 public class Learner {
     private String name;
     private String gender;
-    private final int age;
+    private int age;
     private int grade;
-    private long phoneNumber;
-    private long emergencyContactNumber;
+    private String phoneNumber;
+    private String emergencyContactNumber;
     private final List<RegisteredLesson> registeredLessons;
     private int id = -1;
 
-    public Learner(String name, String gender, int age, int grade, long phoneNumber, long emergencyContactNumber, List<RegisteredLesson> registeredLessons) {
+    public Learner(String name, String gender, int age, int grade, String phoneNumber, String emergencyContactNumber, List<RegisteredLesson> registeredLessons) {
         this.name = name;
         this.gender = gender;
         this.age = age;
@@ -25,7 +25,7 @@ public class Learner {
         this.registeredLessons = registeredLessons;
     }
 
-    public Learner(String name, String gender, int age, int grade, long phoneNumber, long emergencyContactNumber) {
+    public Learner(String name, String gender, int age, int grade, String phoneNumber, String emergencyContactNumber) {
         this(name, gender, age, grade, phoneNumber, emergencyContactNumber, new ArrayList<>());
     }
 
@@ -50,11 +50,11 @@ public class Learner {
         return grade;
     }
 
-    public long getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public long getEmergencyContactNumber() {
+    public String getEmergencyContactNumber() {
         return emergencyContactNumber;
     }
 
@@ -81,11 +81,15 @@ public class Learner {
         this.grade = grade;
     }
 
-    public void setPhoneNumber(long phoneNumber) {
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
-    public void setEmergencyContactNumber(long emergencyContactNumber) {
+    public void setEmergencyContactNumber(String emergencyContactNumber) {
         this.emergencyContactNumber = emergencyContactNumber;
     }
 }

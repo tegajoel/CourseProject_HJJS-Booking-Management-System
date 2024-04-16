@@ -5,6 +5,8 @@ public class Result<T, E> {
     private final E error;
     private final boolean isSuccess;
 
+    public static Object NO_VALUE = new Object();
+
     private Result(T data, E error, boolean isSuccess) {
         this.data = data;
         this.error = error;
@@ -35,5 +37,14 @@ public class Result<T, E> {
             throw new IllegalStateException("Result is a success");
         }
         return error;
+    }
+
+    @Override
+    public String toString() {
+        return "Result{" +
+                "data=" + data +
+                ", error=" + error +
+                ", isSuccess=" + isSuccess +
+                '}';
     }
 }

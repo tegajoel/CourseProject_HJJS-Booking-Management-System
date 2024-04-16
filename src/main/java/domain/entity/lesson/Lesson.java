@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Lesson {
     private final String name;
-    private final int grade;
+    private int grade;
     private final Coach coach;
     private final LocalDate lessonDate;
     private final List<Learner> registeredLearners;
@@ -139,5 +139,13 @@ public class Lesson {
             throw new IllegalStateException("Lesson id not yet assigned");
         }
         return id;
+    }
+
+    /**
+     * Set the grade for this lesson
+     * @param grade grade to be set
+     */
+    public void setGrade(int grade) {
+        this.grade = grade;
     }
 }

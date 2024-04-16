@@ -1,5 +1,7 @@
 package domain.entity;
 
+import domain.entity.lesson.Lesson;
+import domain.entity.lesson.LessonStatus;
 import domain.entity.lesson.RegisteredLesson;
 
 import java.util.ArrayList;
@@ -29,7 +31,7 @@ public class Learner {
         this(name, gender, age, grade, phoneNumber, emergencyContactNumber, new ArrayList<>());
     }
 
-    public Learner setId(int id){
+    public Learner setId(int id) {
         this.id = id;
         return this;
     }
@@ -63,7 +65,7 @@ public class Learner {
     }
 
     public int getId() {
-        if (id == -1){
+        if (id == -1) {
             throw new IllegalStateException("Learner id not yet assigned");
         }
         return id;
@@ -91,5 +93,51 @@ public class Learner {
 
     public void setEmergencyContactNumber(String emergencyContactNumber) {
         this.emergencyContactNumber = emergencyContactNumber;
+    }
+
+    /**
+     * Update the status of the registered lesson
+     *
+     * @param lesson    lesson
+     * @param newStatus new status
+     */
+    public void updateRegisteredLessonStatus(Lesson lesson, LessonStatus newStatus) {
+        for (RegisteredLesson lsn : registeredLessons) {
+            if (lsn.getLesson().equals(lesson)) {
+                lsn.setLessonStatus(newStatus);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Check if a user has registered for a lesson
+     *
+     * @param lesson lesson
+     * @return true if registered, false otherwise
+     */
+    public boolean hasLessonRegistered(Lesson lesson) {
+        for (RegisteredLesson lsn : registeredLessons) {
+            if (lsn.getLesson().equals(lesson)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the lesson status of a registered lesson
+     *
+     * @param lesson the lesson to check
+     * @return the lesson status if the lesson has been registered, null otherwise
+     */
+    public LessonStatus getLessonStatus(Lesson lesson) {
+        for (RegisteredLesson lsn : registeredLessons) {
+            if (lsn.getLesson().equals(lesson)) {
+                return lsn.getLessonStatus();
+            }
+        }
+        return null;
     }
 }

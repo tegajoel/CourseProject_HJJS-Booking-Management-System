@@ -1,5 +1,7 @@
 package domain.entity;
 
+import domain.entity.lesson.Lesson;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

@@ -1,5 +1,7 @@
 package domain.entity;
 
+import domain.entity.lesson.RegisteredLesson;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,10 +12,10 @@ public class Learner {
     private int grade;
     private long phoneNumber;
     private long emergencyContactNumber;
-    private final List<Lesson> registeredLessons;
+    private final List<RegisteredLesson> registeredLessons;
     private int id = -1;
 
-    public Learner(String name, String gender, int age, int grade, long phoneNumber, long emergencyContactNumber, List<Lesson> registeredLessons) {
+    public Learner(String name, String gender, int age, int grade, long phoneNumber, long emergencyContactNumber, List<RegisteredLesson> registeredLessons) {
         this.name = name;
         this.gender = gender;
         this.age = age;
@@ -56,7 +58,7 @@ public class Learner {
         return emergencyContactNumber;
     }
 
-    public List<Lesson> getRegisteredLessons() {
+    public List<RegisteredLesson> getRegisteredLessons() {
         return registeredLessons;
     }
 

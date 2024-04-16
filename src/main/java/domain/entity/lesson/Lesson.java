@@ -1,4 +1,8 @@
-package domain.entity;
+package domain.entity.lesson;
+
+import domain.entity.Coach;
+import domain.entity.Learner;
+import domain.entity.Review;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

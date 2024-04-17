@@ -18,7 +18,7 @@ class FilterLessonsUseCaseTest {
     private Coach testCoach;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         lessonRepository = new LessonRepositoryMock();
         sut = new FilterLessonsUseCase(lessonRepository);
         testCoach = new Coach("Helen");
@@ -26,23 +26,23 @@ class FilterLessonsUseCaseTest {
 
 
     @Test
-    public void filterByGrade_validGrade_returnsSuccess(){
+    public void filterByGrade_validGrade_returnsSuccess() {
         assertTrue(sut.filterByGrade(0).isSuccess());
         assertTrue(sut.filterByGrade(3).isSuccess());
     }
 
     @Test
-    public void filterByGrade_invalidGrade_returnsError(){
+    public void filterByGrade_invalidGrade_returnsError() {
         assertFalse(sut.filterByGrade(-3).isSuccess());
     }
 
     @Test
-    public void filterByGrade_invalidGrade_returnsCorrectError(){
+    public void filterByGrade_invalidGrade_returnsCorrectError() {
         assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, sut.filterByGrade(-3).getError());
     }
 
     @Test
-    public void filterByGrade_succeeds_returnsListWithCorrectSize(){
+    public void filterByGrade_succeeds_returnsListWithCorrectSize() {
         Lesson lesson1 = new Lesson("Diving1", 3, testCoach, LocalDate.now());
         Lesson lesson3 = new Lesson("Diving3", 2, testCoach, LocalDate.now());
         Lesson lesson2 = new Lesson("Diving2", 3, testCoach, LocalDate.now());
@@ -60,7 +60,7 @@ class FilterLessonsUseCaseTest {
     }
 
     @Test
-    public void filterByGrade_succeeds_returnsListWithSameGrade(){
+    public void filterByGrade_succeeds_returnsListWithSameGrade() {
         Lesson lesson1 = new Lesson("Diving1", 3, testCoach, LocalDate.now());
         Lesson lesson3 = new Lesson("Diving3", 2, testCoach, LocalDate.now());
         Lesson lesson2 = new Lesson("Diving2", 3, testCoach, LocalDate.now());
@@ -75,7 +75,7 @@ class FilterLessonsUseCaseTest {
 
         var allSameGrade = true;
 
-        for (Lesson lesson: result){
+        for (Lesson lesson : result) {
             if (lesson.getGrade() != 3) {
                 allSameGrade = false;
                 break;
@@ -86,7 +86,7 @@ class FilterLessonsUseCaseTest {
     }
 
     @Test
-    public void filterByGrade_succeedsWithNoMatch_emptyListReturned(){
+    public void filterByGrade_succeedsWithNoMatch_emptyListReturned() {
         Lesson lesson1 = new Lesson("Diving1", 3, testCoach, LocalDate.now());
         Lesson lesson3 = new Lesson("Diving3", 2, testCoach, LocalDate.now());
         Lesson lesson2 = new Lesson("Diving2", 3, testCoach, LocalDate.now());
@@ -103,65 +103,74 @@ class FilterLessonsUseCaseTest {
     }
 
     @Test
-    public void filterByDay_validDayWednesday_returnsSuccess(){
+    public void filterByDay_validDayWednesday_returnsSuccess() {
         assertTrue(sut.filterByDay("Wednesday").isSuccess());
     }
 
     @Test
-    public void filterByDay_validDayFriday_returnsSuccess(){
+    public void filterByDay_validDayWithWhiteSpace_returnsSuccess() {
+        assertTrue(sut.filterByDay(" Wednesday  ").isSuccess());
+    }
+
+    @Test
+    public void filterByDay_validDayFriday_returnsSuccess() {
         assertTrue(sut.filterByDay("Friday").isSuccess());
     }
 
     @Test
-    public void filterByDay_validDayMixedCase_returnsSuccess(){
+    public void filterByDay_validDayMixedCase_returnsSuccess() {
         assertTrue(sut.filterByDay("FriDay").isSuccess());
     }
 
     @Test
-    public void filterByDay_validDayLowercaseCase_returnsSuccess(){
+    public void filterByDay_validDayLowercaseCase_returnsSuccess() {
         assertTrue(sut.filterByDay("saturday").isSuccess());
     }
 
     @Test
-    public void filterByDay_validDayUppercaseCase_returnsSuccess(){
+    public void filterByDay_validDayUppercaseCase_returnsSuccess() {
         assertTrue(sut.filterByDay("MONDAY").isSuccess());
     }
 
     @Test
-    public void filterByDay_validDayNotInTimetable_returnsSuccess(){
+    public void filterByDay_validDayNotInTimetable_returnsSuccess() {
         assertTrue(sut.filterByDay("Sunday").isSuccess());
     }
 
     @Test
-    public void filterByDay_emptyString_returnsError(){
+    public void filterByDay_emptyString_returnsError() {
         assertFalse(sut.filterByDay("").isSuccess());
     }
 
     @Test
-    public void filterByDay_emptyString_returnsCorrectError(){
+    public void filterByDay_emptyString_returnsCorrectError() {
         assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, sut.filterByDay("").getError());
     }
 
     @Test
-    public void filterByDay_randomString_returnsError(){
+    public void filterByDay_randomString_returnsError() {
         assertFalse(sut.filterByDay("skdsdn").isSuccess());
     }
 
     @Test
-    public void filterByDay_randomString_returnsCorrectError(){
+    public void filterByDay_randomString_returnsCorrectError() {
         assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, sut.filterByDay("skdsdn").getError());
     }
 
     @Test
-    public void filterByDay_invalidGrade_returnsCorrectError(){
+    public void filterByDay_invalidGrade_returnsCorrectError() {
         assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, sut.filterByGrade(-3).getError());
     }
 
     @Test
-    public void fil
+    public void filterByCoach_emptyString_returnsError() {
+        assertFalse(sut.filterByDay("").isSuccess());
+    }
+
 
     private static class LessonRepositoryMock implements LessonRepository {
         private final List<Lesson> lessons = new ArrayList<>();
+
         @Override
         public List<Lesson> getAllLessons() {
             return lessons;

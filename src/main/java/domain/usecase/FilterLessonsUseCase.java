@@ -18,7 +18,7 @@ public class FilterLessonsUseCase {
      * Get a filtered the list of lessons by their grade
      *
      * @param grade grade
-     * @return list of lessons
+     * @return result with {@link List<Lesson>} on success, and {@link Error} on failure
      */
     public Result<List<Lesson>, Error> filterByGrade(int grade) {
         if (grade < 0) {
@@ -32,7 +32,7 @@ public class FilterLessonsUseCase {
      * Get a filtered the list of lessons by the coach
      *
      * @param coachName name of the coach
-     * @return list of lessons
+     * @return result with {@link List<Lesson>} on success, and {@link Error} on failure
      */
     public Result<List<Lesson>, Object> filterByCoach(String coachName) {
         if (coachName == null || coachName.isBlank()) {
@@ -51,7 +51,7 @@ public class FilterLessonsUseCase {
      * Get a filtered the list of lessons by the week day
      *
      * @param weekDay day of the week
-     * @return list of lessons
+     * @return result with {@link List<Lesson>} on success, and {@link Error} on failure
      */
     public Result<List<Lesson>, Error> filterByDay(String weekDay) {
         if (weekDay == null || weekDay.isBlank()) {

@@ -56,6 +56,32 @@ class AttendLessonUseCaseTest {
     }
 
     @Test
+    void attendLesson_invalidReview_LessonStatusNotChanged() {
+        testLearner.setGrade(2);
+        testLesson.setGrade(3);
+        testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
+
+        LessonStatus expectedResult = testLearner.getLessonStatus(testLesson);
+        reviewProvider.setReview(new Review("", -5));
+        sut.execute(testLesson, testLearner, reviewProvider);
+
+        assertEquals(expectedResult, testLearner.getLessonStatus(testLesson));
+    }
+
+    @Test
+    void attendLesson_invalidReview_LearnerGradeNotChanged() {
+        testLearner.setGrade(2);
+        testLesson.setGrade(3);
+        testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
+
+        int currentGrade = testLearner.getGrade();
+        reviewProvider.setReview(new Review("", -5));
+        sut.execute(testLesson, testLearner, reviewProvider);
+
+        assertEquals(currentGrade, testLearner.getGrade());
+    }
+
+    @Test
     void attendLesson_oneGradeHigherLessonAttended_learnerGradeIncrementByOne() {
         testLearner.setGrade(0);
         testLesson.setGrade(1);

@@ -82,6 +82,7 @@ class FilterLessonsUseCaseTest {
             }
         }
 
+        assertFalse(result.isEmpty());
         assertTrue(allSameGrade);
     }
 
@@ -165,6 +166,122 @@ class FilterLessonsUseCaseTest {
     @Test
     public void filterByCoach_emptyString_returnsError() {
         assertFalse(sut.filterByDay("").isSuccess());
+    }
+
+    @Test
+    public void filterByCoach_emptyString_returnsCorrectError() {
+        assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, sut.filterByDay("").getError());
+    }
+
+    @Test
+    public void filterByCoach_succeeds_returnsListWithCorrectSize() {
+        Coach coach1 = new Coach("Helen Paul");
+        Coach coach2 = new Coach("Sam Johnson");
+        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now());
+        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now());
+        Lesson lesson2 = new Lesson("Diving2", 3, coach1, LocalDate.now());
+        Lesson lesson4 = new Lesson("Diving4", 1, coach1, LocalDate.now());
+        Lesson lesson5 = new Lesson("Diving4", 1, coach2, LocalDate.now());
+
+        lessonRepository.addNewLesson(lesson1);
+        lessonRepository.addNewLesson(lesson2);
+        lessonRepository.addNewLesson(lesson3);
+        lessonRepository.addNewLesson(lesson4);
+        lessonRepository.addNewLesson(lesson5);
+
+        var result = sut.filterByCoach(coach2.getName()).getData();
+
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void filterByCoach_succeeds_returnsListWithSameCoach() {
+        Coach coach1 = new Coach("Helen Paul");
+        Coach coach2 = new Coach("Sam Johnson");
+        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now());
+        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now());
+        Lesson lesson2 = new Lesson("Diving2", 3, coach1, LocalDate.now());
+        Lesson lesson4 = new Lesson("Diving4", 1, coach1, LocalDate.now());
+
+        lessonRepository.addNewLesson(lesson1);
+        lessonRepository.addNewLesson(lesson2);
+        lessonRepository.addNewLesson(lesson3);
+        lessonRepository.addNewLesson(lesson4);
+
+        var result = sut.filterByCoach(coach1.getName()).getData();
+
+        var allSameCoach = true;
+
+        for (Lesson lesson : result) {
+            if (lesson.getCoach() != coach1) {
+                allSameCoach = false;
+                break;
+            }
+        }
+
+        assertFalse(result.isEmpty());
+        assertTrue(allSameCoach);
+    }
+
+    @Test
+    public void filterByCoach_succeedsWithNoMatch_emptyListReturned() {
+        Coach coach1 = new Coach("Helen Paul");
+        Coach coach2 = new Coach("Sam Johnson");
+        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now());
+        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now());
+        Lesson lesson2 = new Lesson("Diving2", 3, coach1, LocalDate.now());
+        Lesson lesson4 = new Lesson("Diving4", 1, coach1, LocalDate.now());
+
+        lessonRepository.addNewLesson(lesson1);
+        lessonRepository.addNewLesson(lesson2);
+        lessonRepository.addNewLesson(lesson3);
+        lessonRepository.addNewLesson(lesson4);
+
+        var result = sut.filterByCoach("Abraham").getData();
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void filterByCoach_validCoachWithNameCaseSwapped_returnsListWithCorrectSize() {
+        Coach coach1 = new Coach("Helen Paul");
+        Coach coach2 = new Coach("Sam Johnson");
+        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now());
+        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now());
+        Lesson lesson2 = new Lesson("Diving2", 3, coach1, LocalDate.now());
+        Lesson lesson4 = new Lesson("Diving4", 1, coach1, LocalDate.now());
+        Lesson lesson5 = new Lesson("Diving4", 1, coach2, LocalDate.now());
+
+        lessonRepository.addNewLesson(lesson1);
+        lessonRepository.addNewLesson(lesson2);
+        lessonRepository.addNewLesson(lesson3);
+        lessonRepository.addNewLesson(lesson4);
+        lessonRepository.addNewLesson(lesson5);
+
+        var result = sut.filterByCoach("helEn PauL").getData();
+
+        assertEquals(3, result.size());
+    }
+
+    @Test
+    public void filterByCoach_validCoachWithWhiteSpace_returnsListWithCorrectSize() {
+        Coach coach1 = new Coach("Helen Paul");
+        Coach coach2 = new Coach("Sam Johnson");
+        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now());
+        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now());
+        Lesson lesson2 = new Lesson("Diving2", 3, coach1, LocalDate.now());
+        Lesson lesson4 = new Lesson("Diving4", 1, coach1, LocalDate.now());
+        Lesson lesson5 = new Lesson("Diving4", 1, coach2, LocalDate.now());
+
+        lessonRepository.addNewLesson(lesson1);
+        lessonRepository.addNewLesson(lesson2);
+        lessonRepository.addNewLesson(lesson3);
+        lessonRepository.addNewLesson(lesson4);
+        lessonRepository.addNewLesson(lesson5);
+
+        var result = sut.filterByCoach("  helEn PauL  ").getData();
+
+        assertEquals(3, result.size());
     }
 
 

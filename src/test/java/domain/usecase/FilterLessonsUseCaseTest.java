@@ -38,7 +38,7 @@ class FilterLessonsUseCaseTest {
 
     @Test
     public void filterByGrade_invalidGrade_returnsCorrectError(){
-        assertEquals(FilterLessonsUseCase.Error.INVALID_GRADE, sut.filterByGrade(-3).getError());
+        assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, sut.filterByGrade(-3).getError());
     }
 
     @Test
@@ -139,7 +139,7 @@ class FilterLessonsUseCaseTest {
 
     @Test
     public void filterByDay_emptyString_returnsCorrectError(){
-        assertEquals(FilterLessonsUseCase.Error.INVALID_DAY, sut.filterByDay("").getError());
+        assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, sut.filterByDay("").getError());
     }
 
     @Test
@@ -149,13 +149,16 @@ class FilterLessonsUseCaseTest {
 
     @Test
     public void filterByDay_randomString_returnsCorrectError(){
-        assertEquals(FilterLessonsUseCase.Error.INVALID_DAY, sut.filterByDay("skdsdn").getError());
+        assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, sut.filterByDay("skdsdn").getError());
     }
 
     @Test
     public void filterByDay_invalidGrade_returnsCorrectError(){
-        assertEquals(FilterLessonsUseCase.Error.INVALID_GRADE, sut.filterByGrade(-3).getError());
+        assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, sut.filterByGrade(-3).getError());
     }
+
+    @Test
+    public void fil
 
     private static class LessonRepositoryMock implements LessonRepository {
         private final List<Lesson> lessons = new ArrayList<>();

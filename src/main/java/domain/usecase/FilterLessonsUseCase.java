@@ -29,7 +29,7 @@ public class FilterLessonsUseCase {
 
 
     public enum Error {
-        INVALID_DAY, INVALID_GRADE
+        INVALID_INPUT
     }
 
 }

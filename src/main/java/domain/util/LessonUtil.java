@@ -9,6 +9,11 @@ import java.util.Set;
 
 public class LessonUtil {
 
+    /**
+     * Get the unique set of coached from the list of lessons
+     * @param lessons lessons
+     * @return a unique set of coaches
+     */
     public static Set<Coach> getCoachesFromLessons(List<Lesson> lessons){
         var result = new HashSet<Coach>();
         for (Lesson lesson : lessons) {

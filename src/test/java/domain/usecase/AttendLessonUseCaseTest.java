@@ -147,6 +147,17 @@ class AttendLessonUseCaseTest {
     }
 
     @Test
+    void attendLesson_succeedsWithValidFeedback_FeedbackAddedToLesson() {
+        testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
+
+        Review review = new Review("Great!", 5);
+        reviewProvider.setReview(review);
+        sut.execute(testLesson, testLearner, reviewProvider);
+
+        assertTrue(testLesson.getReviews().contains(review));
+    }
+
+    @Test
     void attendLesson_succeeds_provideFeedbackCalledOnlyOnce() {
         testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
         sut.execute(testLesson, testLearner, reviewProvider);
@@ -164,6 +175,7 @@ class AttendLessonUseCaseTest {
 
     @Test
     void attendLesson_validReview_succeeds() {
+        testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
         reviewProvider.setReview(new Review("Great Lesson!", 3));
 
 
@@ -172,6 +184,7 @@ class AttendLessonUseCaseTest {
 
     @Test
     void attendLesson_emptyReviewMessage_fails() {
+        testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
         reviewProvider.setReview(new Review("", 3));
 
 
@@ -180,6 +193,7 @@ class AttendLessonUseCaseTest {
 
     @Test
     void attendLesson_negativeReviewRating_fails() {
+        testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
         reviewProvider.setReview(new Review("Great Lesson!", -3));
 
 
@@ -188,6 +202,7 @@ class AttendLessonUseCaseTest {
 
     @Test
     void attendLesson_invalidReviewRating_fails() {
+        testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
         reviewProvider.setReview(new Review("Great Lesson!", 6));
 
 
@@ -196,6 +211,7 @@ class AttendLessonUseCaseTest {
 
     @Test
     void attendLesson_invalidReviewRating_failsWithCorrectError() {
+        testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
         reviewProvider.setReview(new Review("Great Lesson!", 6));
 
         var result = sut.execute(testLesson, testLearner, reviewProvider);
@@ -204,7 +220,27 @@ class AttendLessonUseCaseTest {
     }
 
     @Test
+    void attendLesson_zeroReviewRating_fails() {
+        testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
+        reviewProvider.setReview(new Review("Great Lesson!", 0));
+
+
+        assertFalse(sut.execute(testLesson, testLearner, reviewProvider).isSuccess());
+    }
+
+    @Test
+    void attendLesson_zeroReviewRating_failsWithCorrectError() {
+        testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
+        reviewProvider.setReview(new Review("Great Lesson!", 0));
+
+        var result = sut.execute(testLesson, testLearner, reviewProvider);
+
+        assertEquals(AttendLessonUseCase.Error.INVALID_REVIEW_RATING, result.getError());
+    }
+
+    @Test
     void attendLesson_negativeReviewRating_failsWithCorrectError() {
+        testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
         reviewProvider.setReview(new Review("Great Lesson!", -4));
 
         var result = sut.execute(testLesson, testLearner, reviewProvider);
@@ -214,6 +250,7 @@ class AttendLessonUseCaseTest {
 
     @Test
     void attendLesson_emptyReviewMessage_failsCorrectError() {
+        testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
         reviewProvider.setReview(new Review("", 300));
 
         var result = sut.execute(testLesson, testLearner, reviewProvider);
@@ -228,7 +265,7 @@ class AttendLessonUseCaseTest {
 
         @Override
         public Review provideReview() {
-            numberOfTimesCalled = 0;
+            numberOfTimesCalled++;
             return review;
         }
 

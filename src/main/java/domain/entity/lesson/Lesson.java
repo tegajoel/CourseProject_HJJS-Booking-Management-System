@@ -33,6 +33,7 @@ public class Lesson {
         this.lessonDate = lessonDate;
         this.registeredLearners = registeredLearners;
         this.reviews = reviews;
+        coach.assignLesson(this);
     }
 
     /**

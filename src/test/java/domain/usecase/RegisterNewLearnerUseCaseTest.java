@@ -12,7 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RegisterNewLearnerUseCaseTest {
-    private RegisterNewLearnerUseCase sut;
+    private RegisterNewLearnerUseCase useCase;
     private LearnersRepositoryMock repository;
 
     private Learner validLearner;
@@ -20,14 +20,14 @@ class RegisterNewLearnerUseCaseTest {
     @BeforeEach
     void setUp() {
         repository = new LearnersRepositoryMock();
-        sut = new RegisterNewLearnerUseCase(repository);
+        useCase = new RegisterNewLearnerUseCase(repository);
         String validPhoneNumber = "08012345680";
         validLearner = new Learner("John doe", "Male", 5, 5, validPhoneNumber, validPhoneNumber);
     }
 
     @Test
     public void addValidLearner_successReturned() {
-        Result<Object, RegisterNewLearnerUseCase.Error> result = sut.execute(validLearner);
+        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.execute(validLearner);
 
         assertTrue(result.isSuccess());
     }
@@ -35,14 +35,14 @@ class RegisterNewLearnerUseCaseTest {
     @Test
     public void addValidLearner_repositoryIncremented() {
         int currentRepoSize = repository.size();
-        sut.execute(validLearner);
+        useCase.execute(validLearner);
 
         assertEquals(currentRepoSize + 1, repository.size());
     }
 
     @Test
     public void addLearner_onSuccess_leanerIDAssigned() {
-        sut.execute(validLearner);
+        useCase.execute(validLearner);
 
         assertDoesNotThrow(() -> {
             validLearner.getId();
@@ -54,7 +54,7 @@ class RegisterNewLearnerUseCaseTest {
         Learner learner = validLearner;
         learner.setAge(60);
 
-        Result<Object, RegisterNewLearnerUseCase.Error> result = sut.execute(learner);
+        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.execute(learner);
         assertFalse(result.isSuccess());
         assertEquals(RegisterNewLearnerUseCase.Error.INVALID_AGE, result.getError());
     }
@@ -64,7 +64,7 @@ class RegisterNewLearnerUseCaseTest {
         int currentRepoSize = repository.size();
         Learner invalidLEarner = validLearner;
         invalidLEarner.setAge(60);
-        sut.execute(invalidLEarner);
+        useCase.execute(invalidLEarner);
 
         assertEquals(currentRepoSize, repository.size());
     }
@@ -74,7 +74,7 @@ class RegisterNewLearnerUseCaseTest {
         Learner learner = validLearner;
         learner.setGrade(6);
 
-        Result<Object, RegisterNewLearnerUseCase.Error> result = sut.execute(learner);
+        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.execute(learner);
         assertFalse(result.isSuccess());
         assertEquals(RegisterNewLearnerUseCase.Error.INVALID_GRADE, result.getError());
     }
@@ -84,7 +84,7 @@ class RegisterNewLearnerUseCaseTest {
         Learner learner = validLearner;
         learner.setPhoneNumber("");
 
-        Result<Object, RegisterNewLearnerUseCase.Error> result = sut.execute(learner);
+        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.execute(learner);
         assertFalse(result.isSuccess());
         assertEquals(RegisterNewLearnerUseCase.Error.INVALID_PHONE_NUMBER, result.getError());
     }
@@ -94,7 +94,7 @@ class RegisterNewLearnerUseCaseTest {
         Learner learner = validLearner;
         learner.setEmergencyContactNumber("");
 
-        Result<Object, RegisterNewLearnerUseCase.Error> result = sut.execute(learner);
+        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.execute(learner);
         assertFalse(result.isSuccess());
         assertEquals(RegisterNewLearnerUseCase.Error.INVALID_PHONE_NUMBER, result.getError());
     }

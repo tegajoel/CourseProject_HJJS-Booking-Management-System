@@ -14,21 +14,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GenerateCoachReportUseCaseTest {
-    private GenerateCoachReportUseCase sut;
+    private GenerateCoachReportUseCase useCase;
     private CoachRepository coachRepository;
     private Coach testCoach;
 
     @BeforeEach
     void setUp() {
         coachRepository = new CoachRepositoryMock();
-        sut = new GenerateCoachReportUseCase(coachRepository);
+        useCase = new GenerateCoachReportUseCase(coachRepository);
         testCoach = new Coach("Mary Anderson");
     }
 
     @Test
     void getReportForCoach_reportAndLearnerNameSame() {
         testCoach.setName("Mary Anderson");
-        assertEquals("Mary Anderson", sut.getReportForCoach(testCoach).coachName());
+        assertEquals("Mary Anderson", useCase.getReportForCoach(testCoach).coachName());
     }
 
 
@@ -39,8 +39,8 @@ public class GenerateCoachReportUseCaseTest {
         Lesson lesson2 = new Lesson("Diving2", 3, testCoach, LocalDate.now());
         Lesson lesson4 = new Lesson("Diving4", 1, testCoach, LocalDate.now());
 
-        assertEquals(4, sut.getReportForCoach(testCoach).numberOfLessonsTaught());
-        assertEquals(4, sut.getReportForCoach(testCoach).lessonsTaught().size());
+        assertEquals(4, useCase.getReportForCoach(testCoach).numberOfLessonsTaught());
+        assertEquals(4, useCase.getReportForCoach(testCoach).lessonsTaught().size());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class GenerateCoachReportUseCaseTest {
         Lesson lesson4 = new Lesson("Diving4", 1, testCoach, LocalDate.now());
 
         var isCoachForAllLessons = true;
-        var result = sut.getReportForCoach(testCoach).lessonsTaught();
+        var result = useCase.getReportForCoach(testCoach).lessonsTaught();
 
         for (Lesson lesson : result) {
             if (lesson.getCoach() != testCoach) {
@@ -73,7 +73,7 @@ public class GenerateCoachReportUseCaseTest {
         coachRepository.addNewCoach(coach2);
         coachRepository.addNewCoach(coach3);
 
-        assertEquals(3, sut.getReportForAllCoaches().size());
+        assertEquals(3, useCase.getReportForAllCoaches().size());
     }
 
     private static class CoachRepositoryMock implements CoachRepository {

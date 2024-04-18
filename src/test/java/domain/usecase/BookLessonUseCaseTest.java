@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BookLessonUseCaseTest {
-    private BookLessonUseCase sut;
+    private BookLessonUseCase useCase;
     private Learner learner;
     private Lesson testLesson;
     private final String validPhoneNumber = "08012345680";
@@ -20,7 +20,7 @@ class BookLessonUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        sut = new BookLessonUseCase();
+        useCase = new BookLessonUseCase();
         learner = new Learner("John doe", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
         Coach coach = new Coach("Peter");
         testLesson = new Lesson("Diving", passingTestGrade, coach, LocalDate.now());
@@ -28,26 +28,26 @@ class BookLessonUseCaseTest {
 
     @Test
     public void bookLesson_sameGrade_succeeds() {
-        assertTrue(sut.execute(testLesson, learner).isSuccess());
+        assertTrue(useCase.execute(testLesson, learner).isSuccess());
     }
 
     @Test
     public void bookLesson_succeeds_leanerAddedToLesson() {
-        sut.execute(testLesson, learner);
+        useCase.execute(testLesson, learner);
 
         assertTrue(testLesson.getRegisteredLearners().contains(learner));
     }
 
     @Test
     public void bookLesson_succeeds_lessonAddedToLearner() {
-        sut.execute(testLesson, learner);
+        useCase.execute(testLesson, learner);
 
         assertTrue(learner.hasLessonRegistered(testLesson));
     }
 
     @Test
     public void bookLesson_succeeds_hasInitialLessonStatusAsBooked() {
-        sut.execute(testLesson, learner);
+        useCase.execute(testLesson, learner);
 
         assertEquals(LessonStatus.BOOKED, learner.getLessonStatus(testLesson));
     }
@@ -58,7 +58,7 @@ class BookLessonUseCaseTest {
         testLesson.setGrade(4);
         learner.setGrade(3);
 
-        assertTrue(sut.execute(testLesson, learner).isSuccess());
+        assertTrue(useCase.execute(testLesson, learner).isSuccess());
     }
 
     @Test
@@ -66,7 +66,7 @@ class BookLessonUseCaseTest {
         testLesson.setGrade(4);
         learner.setGrade(2);
 
-        assertFalse(sut.execute(testLesson, learner).isSuccess());
+        assertFalse(useCase.execute(testLesson, learner).isSuccess());
     }
 
     @Test
@@ -74,7 +74,7 @@ class BookLessonUseCaseTest {
         testLesson.setGrade(1);
         learner.setGrade(3);
 
-        assertFalse(sut.execute(testLesson, learner).isSuccess());
+        assertFalse(useCase.execute(testLesson, learner).isSuccess());
     }
 
     @Test
@@ -82,7 +82,7 @@ class BookLessonUseCaseTest {
         testLesson.setGrade(1);
         learner.setGrade(3);
 
-        var result = sut.execute(testLesson, learner);
+        var result = useCase.execute(testLesson, learner);
         assertEquals(BookLessonUseCase.Error.LESSON_BELOW_LEARNER_GRADE, result.getError());
     }
 
@@ -92,21 +92,21 @@ class BookLessonUseCaseTest {
         testLesson.setGrade(4);
         learner.setGrade(2);
 
-        var result = sut.execute(testLesson, learner);
+        var result = useCase.execute(testLesson, learner);
         assertEquals(BookLessonUseCase.Error.LESSON_ABOVE_LEARNER_GRADE, result.getError());
     }
 
     @Test
     public void bookLesson_duplicateBooking_fails() {
-        sut.execute(testLesson, learner);
-        assertFalse(sut.execute(testLesson, learner).isSuccess());
+        useCase.execute(testLesson, learner);
+        assertFalse(useCase.execute(testLesson, learner).isSuccess());
     }
 
     @Test
     public void bookLesson_duplicateBooking_failsWithCorrectError() {
-        sut.execute(testLesson, learner);
+        useCase.execute(testLesson, learner);
 
-        var result = sut.execute(testLesson, learner);
+        var result = useCase.execute(testLesson, learner);
         assertEquals(BookLessonUseCase.Error.DUPLICATE_BOOKING, result.getError());
     }
 
@@ -118,12 +118,12 @@ class BookLessonUseCaseTest {
         Learner learner4 = new Learner("John doe4", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
         Learner learner5 = new Learner("John doe5", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
 
-        sut.execute(testLesson, learner1);
-        sut.execute(testLesson, learner2);
-        sut.execute(testLesson, learner3);
-        sut.execute(testLesson, learner4);
+        useCase.execute(testLesson, learner1);
+        useCase.execute(testLesson, learner2);
+        useCase.execute(testLesson, learner3);
+        useCase.execute(testLesson, learner4);
 
-        assertFalse(sut.execute(testLesson, learner5).isSuccess());
+        assertFalse(useCase.execute(testLesson, learner5).isSuccess());
     }
 
     @Test
@@ -134,13 +134,13 @@ class BookLessonUseCaseTest {
         Learner learner4 = new Learner("John doe4", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
         Learner learner5 = new Learner("John doe5", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
 
-        sut.execute(testLesson, learner1);
-        sut.execute(testLesson, learner2);
-        sut.execute(testLesson, learner3);
-        sut.execute(testLesson, learner4);
+        useCase.execute(testLesson, learner1);
+        useCase.execute(testLesson, learner2);
+        useCase.execute(testLesson, learner3);
+        useCase.execute(testLesson, learner4);
 
 
-        var result = sut.execute(testLesson, learner5);
+        var result = useCase.execute(testLesson, learner5);
         assertEquals(BookLessonUseCase.Error.LESSON_FULLY_BOOKED, result.getError());
     }
 
@@ -152,13 +152,13 @@ class BookLessonUseCaseTest {
         Learner learner4 = new Learner("John doe4", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
         Learner learner5 = new Learner("John doe5", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
 
-        sut.execute(testLesson, learner1);
-        sut.execute(testLesson, learner2);
-        sut.execute(testLesson, learner3);
-        sut.execute(testLesson, learner4);
+        useCase.execute(testLesson, learner1);
+        useCase.execute(testLesson, learner2);
+        useCase.execute(testLesson, learner3);
+        useCase.execute(testLesson, learner4);
 
         learner5.updateRegisteredLessonStatus(testLesson, LessonStatus.CANCELLED);
 
-        assertFalse(sut.execute(testLesson, learner5).isSuccess());
+        assertFalse(useCase.execute(testLesson, learner5).isSuccess());
     }
 }

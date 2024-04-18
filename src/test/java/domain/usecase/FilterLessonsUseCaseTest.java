@@ -13,32 +13,32 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FilterLessonsUseCaseTest {
-    private FilterLessonsUseCase sut;
+    private FilterLessonsUseCase useCase;
     private LessonRepository lessonRepository;
     private Coach testCoach;
 
     @BeforeEach
     void setUp() {
         lessonRepository = new LessonRepositoryMock();
-        sut = new FilterLessonsUseCase(lessonRepository);
+        useCase = new FilterLessonsUseCase(lessonRepository);
         testCoach = new Coach("Helen");
     }
 
 
     @Test
     public void filterByGrade_validGrade_returnsSuccess() {
-        assertTrue(sut.filterByGrade(0).isSuccess());
-        assertTrue(sut.filterByGrade(3).isSuccess());
+        assertTrue(useCase.filterByGrade(0).isSuccess());
+        assertTrue(useCase.filterByGrade(3).isSuccess());
     }
 
     @Test
     public void filterByGrade_invalidGrade_returnsError() {
-        assertFalse(sut.filterByGrade(-3).isSuccess());
+        assertFalse(useCase.filterByGrade(-3).isSuccess());
     }
 
     @Test
     public void filterByGrade_invalidGrade_returnsCorrectError() {
-        assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, sut.filterByGrade(-3).getError());
+        assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, useCase.filterByGrade(-3).getError());
     }
 
     @Test
@@ -53,7 +53,7 @@ class FilterLessonsUseCaseTest {
         lessonRepository.addNewLesson(lesson3);
         lessonRepository.addNewLesson(lesson4);
 
-        var result = sut.filterByGrade(3).getData();
+        var result = useCase.filterByGrade(3).getData();
 
         assertEquals(2, result.size());
 
@@ -71,7 +71,7 @@ class FilterLessonsUseCaseTest {
         lessonRepository.addNewLesson(lesson3);
         lessonRepository.addNewLesson(lesson4);
 
-        var result = sut.filterByGrade(3).getData();
+        var result = useCase.filterByGrade(3).getData();
 
         var allSameGrade = true;
 
@@ -98,79 +98,79 @@ class FilterLessonsUseCaseTest {
         lessonRepository.addNewLesson(lesson3);
         lessonRepository.addNewLesson(lesson4);
 
-        var result = sut.filterByGrade(4).getData();
+        var result = useCase.filterByGrade(4).getData();
 
         assertTrue(result.isEmpty());
     }
 
     @Test
     public void filterByDay_validDayWednesday_returnsSuccess() {
-        assertTrue(sut.filterByDay("Wednesday").isSuccess());
+        assertTrue(useCase.filterByDay("Wednesday").isSuccess());
     }
 
     @Test
     public void filterByDay_validDayWithWhiteSpace_returnsSuccess() {
-        assertTrue(sut.filterByDay(" Wednesday  ").isSuccess());
+        assertTrue(useCase.filterByDay(" Wednesday  ").isSuccess());
     }
 
     @Test
     public void filterByDay_validDayFriday_returnsSuccess() {
-        assertTrue(sut.filterByDay("Friday").isSuccess());
+        assertTrue(useCase.filterByDay("Friday").isSuccess());
     }
 
     @Test
     public void filterByDay_validDayMixedCase_returnsSuccess() {
-        assertTrue(sut.filterByDay("FriDay").isSuccess());
+        assertTrue(useCase.filterByDay("FriDay").isSuccess());
     }
 
     @Test
     public void filterByDay_validDayLowercaseCase_returnsSuccess() {
-        assertTrue(sut.filterByDay("saturday").isSuccess());
+        assertTrue(useCase.filterByDay("saturday").isSuccess());
     }
 
     @Test
     public void filterByDay_validDayUppercaseCase_returnsSuccess() {
-        assertTrue(sut.filterByDay("MONDAY").isSuccess());
+        assertTrue(useCase.filterByDay("MONDAY").isSuccess());
     }
 
     @Test
     public void filterByDay_validDayNotInTimetable_returnsSuccess() {
-        assertTrue(sut.filterByDay("Sunday").isSuccess());
+        assertTrue(useCase.filterByDay("Sunday").isSuccess());
     }
 
     @Test
     public void filterByDay_emptyString_returnsError() {
-        assertFalse(sut.filterByDay("").isSuccess());
+        assertFalse(useCase.filterByDay("").isSuccess());
     }
 
     @Test
     public void filterByDay_emptyString_returnsCorrectError() {
-        assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, sut.filterByDay("").getError());
+        assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, useCase.filterByDay("").getError());
     }
 
     @Test
     public void filterByDay_randomString_returnsError() {
-        assertFalse(sut.filterByDay("skdsdn").isSuccess());
+        assertFalse(useCase.filterByDay("skdsdn").isSuccess());
     }
 
     @Test
     public void filterByDay_randomString_returnsCorrectError() {
-        assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, sut.filterByDay("skdsdn").getError());
+        assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, useCase.filterByDay("skdsdn").getError());
     }
 
     @Test
     public void filterByDay_invalidGrade_returnsCorrectError() {
-        assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, sut.filterByGrade(-3).getError());
+        assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, useCase.filterByGrade(-3).getError());
     }
 
     @Test
     public void filterByCoach_emptyString_returnsError() {
-        assertFalse(sut.filterByDay("").isSuccess());
+        assertFalse(useCase.filterByDay("").isSuccess());
     }
 
     @Test
     public void filterByCoach_emptyString_returnsCorrectError() {
-        assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, sut.filterByDay("").getError());
+        assertEquals(FilterLessonsUseCase.Error.INVALID_INPUT, useCase.filterByDay("").getError());
     }
 
     @Test
@@ -189,7 +189,7 @@ class FilterLessonsUseCaseTest {
         lessonRepository.addNewLesson(lesson4);
         lessonRepository.addNewLesson(lesson5);
 
-        var result = sut.filterByCoach(coach2.getName()).getData();
+        var result = useCase.filterByCoach(coach2.getName()).getData();
 
         assertEquals(2, result.size());
     }
@@ -208,7 +208,7 @@ class FilterLessonsUseCaseTest {
         lessonRepository.addNewLesson(lesson3);
         lessonRepository.addNewLesson(lesson4);
 
-        var result = sut.filterByCoach(coach1.getName()).getData();
+        var result = useCase.filterByCoach(coach1.getName()).getData();
 
         var allSameCoach = true;
 
@@ -237,7 +237,7 @@ class FilterLessonsUseCaseTest {
         lessonRepository.addNewLesson(lesson3);
         lessonRepository.addNewLesson(lesson4);
 
-        var result = sut.filterByCoach("Abraham").getData();
+        var result = useCase.filterByCoach("Abraham").getData();
 
         assertTrue(result.isEmpty());
     }
@@ -258,7 +258,7 @@ class FilterLessonsUseCaseTest {
         lessonRepository.addNewLesson(lesson4);
         lessonRepository.addNewLesson(lesson5);
 
-        var result = sut.filterByCoach("helEn PauL").getData();
+        var result = useCase.filterByCoach("helEn PauL").getData();
 
         assertEquals(3, result.size());
     }
@@ -279,7 +279,7 @@ class FilterLessonsUseCaseTest {
         lessonRepository.addNewLesson(lesson4);
         lessonRepository.addNewLesson(lesson5);
 
-        var result = sut.filterByCoach("  helEn PauL  ").getData();
+        var result = useCase.filterByCoach("  helEn PauL  ").getData();
 
         assertEquals(3, result.size());
     }

@@ -18,38 +18,38 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GenerateLearnerReportUseCaseTest {
 
-    private GenerateLearnerReportUseCase sut;
+    private GenerateLearnerReportUseCase useCase;
     private LearnerRepository learnerRepository;
     private Learner learner;
     @BeforeEach
     void setUp() {
         learnerRepository = new LearnerRepositoryMock();
-        sut = new GenerateLearnerReportUseCase(learnerRepository);
+        useCase = new GenerateLearnerReportUseCase(learnerRepository);
         learner = new Learner("John Paul", "Female", 5, 5, "", "");
     }
 
     @Test
     void getReportForLearner_reportAndLearnerNameSame() {
         learner.setName("Sam Smith");
-        assertEquals("Sam Smith", sut.getReportForLearner(learner).learnerName());
+        assertEquals("Sam Smith", useCase.getReportForLearner(learner).learnerName());
     }
 
     @Test
     void getReportForLearner_reportAndLearnerAgeSame() {
         learner.setAge(4);
-        assertEquals(4, sut.getReportForLearner(learner).learnerAge());
+        assertEquals(4, useCase.getReportForLearner(learner).learnerAge());
     }
 
     @Test
     void getReportForLearner_reportAndLearnerGradeSame() {
         learner.setGrade(3);
-        assertEquals(3, sut.getReportForLearner(learner).currentGrade());
+        assertEquals(3, useCase.getReportForLearner(learner).currentGrade());
     }
 
     @Test
     void getReportForLearner_reportAndLearnerGenderSame() {
         learner.setGender("Female");
-        assertEquals("Female", sut.getReportForLearner(learner).learnerGender());
+        assertEquals("Female", useCase.getReportForLearner(learner).learnerGender());
     }
 
     @Test
@@ -65,7 +65,7 @@ class GenerateLearnerReportUseCaseTest {
         learner.registerNewLesson(new RegisteredLesson(lesson3, LessonStatus.ATTENDED));
         learner.registerNewLesson(new RegisteredLesson(lesson4, LessonStatus.CANCELLED));
 
-        assertEquals(4, sut.getReportForLearner(learner).totalRegisteredLessons());
+        assertEquals(4, useCase.getReportForLearner(learner).totalRegisteredLessons());
     }
 
     @Test
@@ -81,7 +81,7 @@ class GenerateLearnerReportUseCaseTest {
         learner.registerNewLesson(new RegisteredLesson(lesson3, LessonStatus.ATTENDED));
         learner.registerNewLesson(new RegisteredLesson(lesson4, LessonStatus.CANCELLED));
 
-        assertEquals(2, sut.getReportForLearner(learner).bookedLessons().size());
+        assertEquals(2, useCase.getReportForLearner(learner).bookedLessons().size());
     }
 
     @Test
@@ -97,7 +97,7 @@ class GenerateLearnerReportUseCaseTest {
         learner.registerNewLesson(new RegisteredLesson(lesson4, LessonStatus.CANCELLED));
         learner.registerNewLesson(new RegisteredLesson(lesson3, LessonStatus.ATTENDED));
 
-        assertEquals(1, sut.getReportForLearner(learner).attendedLessons().size());
+        assertEquals(1, useCase.getReportForLearner(learner).attendedLessons().size());
     }
 
     @Test
@@ -113,12 +113,12 @@ class GenerateLearnerReportUseCaseTest {
         learner.registerNewLesson(new RegisteredLesson(lesson3, LessonStatus.ATTENDED));
         learner.registerNewLesson(new RegisteredLesson(lesson4, LessonStatus.CANCELLED));
 
-        assertEquals(1, sut.getReportForLearner(learner).cancelledLessons().size());
+        assertEquals(1, useCase.getReportForLearner(learner).cancelledLessons().size());
     }
 
     @Test
     void getReportForLearner_NoRegisteredLesson_reportRegisteredLessonIsZero() {
-        assertEquals(0, sut.getReportForLearner(learner).totalRegisteredLessons());
+        assertEquals(0, useCase.getReportForLearner(learner).totalRegisteredLessons());
     }
 
     @Test
@@ -143,7 +143,7 @@ class GenerateLearnerReportUseCaseTest {
         learnerRepository.addNewLearner(learner2);
         learnerRepository.addNewLearner(learner3);
 
-        assertEquals(3, sut.getReportForAllLearners().size());
+        assertEquals(3, useCase.getReportForAllLearners().size());
     }
 
 

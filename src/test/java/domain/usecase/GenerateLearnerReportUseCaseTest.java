@@ -6,6 +6,7 @@ import domain.entity.lesson.Lesson;
 import domain.entity.lesson.LessonStatus;
 import domain.entity.lesson.RegisteredLesson;
 import domain.repository.LearnerRepository;
+import domain.util.Result;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -159,7 +160,7 @@ class GenerateLearnerReportUseCaseTest {
         }
 
         @Override
-        public Learner getLearnerById(int id) {
+        public Result<Learner, Error> getLearnerById(int id) {
             return null;
         }
     }

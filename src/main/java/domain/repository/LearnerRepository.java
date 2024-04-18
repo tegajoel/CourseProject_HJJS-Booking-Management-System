@@ -1,6 +1,7 @@
 package domain.repository;
 
 import domain.entity.Learner;
+import domain.util.Result;
 
 import java.util.List;
 
@@ -21,7 +22,11 @@ public interface LearnerRepository {
     /**
      * Get a learner by their id
      * @param id id
-     * @return the learner if they exist, null otherwise
+     * @return the {@link Learner} in success if they exist, an error with {@link Error} value otherwise
      */
-    Learner getLearnerById(int id);
+    Result<Learner, Error> getLearnerById(int id);
+
+    enum Error {
+        LEARNER_NOT_FOUND
+    }
 }

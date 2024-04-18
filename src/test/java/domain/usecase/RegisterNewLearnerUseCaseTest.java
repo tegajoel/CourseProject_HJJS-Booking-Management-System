@@ -115,7 +115,7 @@ class RegisterNewLearnerUseCaseTest {
         }
 
         @Override
-        public Learner getLearnerById(int id) {
+        public Result<Learner, LearnerRepository.Error> getLearnerById(int id) {
             return null;
         }
 

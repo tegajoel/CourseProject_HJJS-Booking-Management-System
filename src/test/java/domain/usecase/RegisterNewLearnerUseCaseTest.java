@@ -27,7 +27,7 @@ class RegisterNewLearnerUseCaseTest {
 
     @Test
     public void addValidLearner_successReturned() {
-        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.execute(validLearner);
+        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.registerLearner(validLearner);
 
         assertTrue(result.isSuccess());
     }
@@ -35,14 +35,14 @@ class RegisterNewLearnerUseCaseTest {
     @Test
     public void addValidLearner_repositoryIncremented() {
         int currentRepoSize = repository.size();
-        useCase.execute(validLearner);
+        useCase.registerLearner(validLearner);
 
         assertEquals(currentRepoSize + 1, repository.size());
     }
 
     @Test
     public void addLearner_onSuccess_leanerIDAssigned() {
-        useCase.execute(validLearner);
+        useCase.registerLearner(validLearner);
 
         assertDoesNotThrow(() -> {
             validLearner.getId();
@@ -54,7 +54,7 @@ class RegisterNewLearnerUseCaseTest {
         Learner learner = validLearner;
         learner.setAge(60);
 
-        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.execute(learner);
+        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.registerLearner(learner);
         assertFalse(result.isSuccess());
         assertEquals(RegisterNewLearnerUseCase.Error.INVALID_AGE, result.getError());
     }
@@ -64,7 +64,7 @@ class RegisterNewLearnerUseCaseTest {
         int currentRepoSize = repository.size();
         Learner invalidLEarner = validLearner;
         invalidLEarner.setAge(60);
-        useCase.execute(invalidLEarner);
+        useCase.registerLearner(invalidLEarner);
 
         assertEquals(currentRepoSize, repository.size());
     }
@@ -74,7 +74,7 @@ class RegisterNewLearnerUseCaseTest {
         Learner learner = validLearner;
         learner.setGrade(6);
 
-        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.execute(learner);
+        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.registerLearner(learner);
         assertFalse(result.isSuccess());
         assertEquals(RegisterNewLearnerUseCase.Error.INVALID_GRADE, result.getError());
     }
@@ -84,7 +84,7 @@ class RegisterNewLearnerUseCaseTest {
         Learner learner = validLearner;
         learner.setPhoneNumber("");
 
-        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.execute(learner);
+        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.registerLearner(learner);
         assertFalse(result.isSuccess());
         assertEquals(RegisterNewLearnerUseCase.Error.INVALID_PHONE_NUMBER, result.getError());
     }
@@ -94,7 +94,7 @@ class RegisterNewLearnerUseCaseTest {
         Learner learner = validLearner;
         learner.setEmergencyContactNumber("");
 
-        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.execute(learner);
+        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.registerLearner(learner);
         assertFalse(result.isSuccess());
         assertEquals(RegisterNewLearnerUseCase.Error.INVALID_PHONE_NUMBER, result.getError());
     }

@@ -19,7 +19,7 @@ public class RegisterNewLearnerUseCase {
      * @return Result with {@link Result#NO_VALUE} on success,
      * otherwise, {@link Result#error(Object)} with {@link Error} as its error data
      */
-    public Result<Object, Error> execute(Learner learner) {
+    public Result<Object, Error> registerLearner(Learner learner) {
         if (learner.getAge() < 4 || learner.getAge() > 11) {
             return Result.error(Error.INVALID_AGE);
         }

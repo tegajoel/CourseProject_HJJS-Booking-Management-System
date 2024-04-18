@@ -54,14 +54,14 @@ class LessonUtilTest {
     }
 
     @Test
-    void getAverageReviewRating_emptyReviewList_returnsNoRating(){
+    void getAverageReviewRating_emptyReviewList_returnsNoRating() {
         Rating rating = LessonUtil.getAverageReviewRating(new ArrayList<>());
 
         assertEquals(Rating.NONE, rating);
     }
 
     @Test
-    void getAverageReviewRating_reviewListOneItem_returnsItemRating(){
+    void getAverageReviewRating_reviewListOneItem_returnsItemRating() {
 
         Rating rating = LessonUtil.getAverageReviewRating(List.of(new Review("Good", 4)));
 
@@ -69,7 +69,7 @@ class LessonUtilTest {
     }
 
     @Test
-    void getAverageReviewRating_reviewListMultipleItems_returnsAverageItemRating(){
+    void getAverageReviewRating_reviewListMultipleItems_returnsAverageItemRating() {
         var reviews = List.of(new Review("Good", 4), new Review("Great", 5), new Review("Meh", 2));
         Rating rating = LessonUtil.getAverageReviewRating(reviews);
 
@@ -77,11 +77,58 @@ class LessonUtilTest {
     }
 
     @Test
-    void getAverageReviewRating_ratingsRoundToOneDecimalPlace(){
+    void getAverageReviewRating_ratingsRoundToOneDecimalPlace() {
         var reviews = List.of(new Review("Good", 4), new Review("Great", 5), new Review("Meh", 2));
         Rating rating = LessonUtil.getAverageReviewRating(reviews);
 
-        assertTrue(hasDecimalPlaces(rating.getRatingValue(),1));
+        assertTrue(hasDecimalPlaces(rating.getRatingValue(), 1));
+    }
+
+    @Test
+    void getAverageRating_ratingsRoundToOneDecimalPlace() {
+        var ratings = List.of(new Rating(4), new Rating(5), new Rating(2));
+        Rating rating = LessonUtil.getAverageRating(ratings);
+
+        assertTrue(hasDecimalPlaces(rating.getRatingValue(), 1));
+    }
+
+    @Test
+    void getAverageRating_emptyRatingList_returnsNoRating() {
+        Rating rating = LessonUtil.getAverageRating(new ArrayList<>());
+
+        assertEquals(Rating.NONE, rating);
+    }
+
+    @Test
+    void getAverageRating_ratingListOneItem_returnsItemRating() {
+
+        Rating rating = LessonUtil.getAverageRating(List.of(new Rating(4)));
+
+        assertEquals(4, rating.getRatingValue());
+    }
+
+    @Test
+    void getAverageRating_ratingListOneEmptyRating_returnsNoRating() {
+
+        Rating rating = LessonUtil.getAverageRating(List.of(Rating.NONE));
+
+        assertEquals(Rating.NONE, rating);
+    }
+
+    @Test
+    void getAverageRating_ratingListMultipleValidItems_returnsAverageItemRating() {
+        var ratings = List.of(new Rating(4), new Rating(5), new Rating(2));
+        Rating rating = LessonUtil.getAverageRating(ratings);
+
+        assertEquals(3.7, rating.getRatingValue());
+    }
+
+    @Test
+    void getAverageRating_ratingListValidAndInvalidItems_returnsAverageItemRating() {
+        var ratings = List.of(new Rating(4), Rating.NONE, new Rating(5), Rating.NONE, new Rating(2));
+        Rating rating = LessonUtil.getAverageRating(ratings);
+
+        assertEquals(3.7, rating.getRatingValue());
     }
 
     /**

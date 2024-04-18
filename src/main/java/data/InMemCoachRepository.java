@@ -8,6 +8,7 @@ import java.util.List;
 
 public class InMemCoachRepository implements CoachRepository {
     private final List<Coach> coaches = new ArrayList<>();
+
     @Override
     public List<Coach> getAllCoaches() {
         return coaches;
@@ -18,7 +19,7 @@ public class InMemCoachRepository implements CoachRepository {
         coaches.add(coach);
     }
 
-    public void addCoaches(List<Coach> coaches){
+    public void addCoaches(List<Coach> coaches) {
         this.coaches.addAll(coaches);
     }
 }

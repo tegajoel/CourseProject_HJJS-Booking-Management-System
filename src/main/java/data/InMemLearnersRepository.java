@@ -9,6 +9,7 @@ import java.util.List;
 
 public class InMemLearnersRepository implements LearnerRepository {
     private final List<Learner> learners = new ArrayList<>();
+
     @Override
     public boolean addNewLearner(Learner learner) {
         return learners.add(learner);
@@ -28,7 +29,7 @@ public class InMemLearnersRepository implements LearnerRepository {
         return Result.error(Error.LEARNER_NOT_FOUND);
     }
 
-    public void addLearners(List<Learner> learners){
+    public void addLearners(List<Learner> learners) {
         this.learners.addAll(learners);
     }
 }

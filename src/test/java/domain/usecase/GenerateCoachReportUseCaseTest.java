@@ -64,7 +64,7 @@ public class GenerateCoachReportUseCaseTest {
     }
 
     @Test
-    void getAllCoachesReport_returnsReportListWithCorrectSize() {
+    void getReportForAllCoaches_returnsReportListWithCorrectSize() {
         Coach coach = new Coach("John Smith");
         Coach coach2 = new Coach("Abraham Johnson");
         Coach coach3 = new Coach("Peter Parker");

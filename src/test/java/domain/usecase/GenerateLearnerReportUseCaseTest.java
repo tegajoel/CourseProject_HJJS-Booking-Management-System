@@ -122,7 +122,7 @@ class GenerateLearnerReportUseCaseTest {
     }
 
     @Test
-    void getAllLearnersReport_returnsReportListWithCorrectSize(){
+    void getReportForAllLearners_returnsReportListWithCorrectSize(){
         Coach coach = new Coach("John Smith");
         Lesson lesson1 = new Lesson("Diving1", 3, coach, LocalDate.now());
         Lesson lesson3 = new Lesson("Diving3", 2, coach, LocalDate.now());

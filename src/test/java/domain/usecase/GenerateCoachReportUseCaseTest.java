@@ -2,13 +2,12 @@ package domain.usecase;
 
 import domain.entity.Coach;
 import domain.entity.lesson.Lesson;
+import domain.mock.CoachRepositoryMock;
 import domain.repository.CoachRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -74,20 +73,6 @@ public class GenerateCoachReportUseCaseTest {
         coachRepository.addNewCoach(coach3);
 
         assertEquals(3, useCase.getReportForAllCoaches().size());
-    }
-
-    private static class CoachRepositoryMock implements CoachRepository {
-        private final List<Coach> coaches = new ArrayList<>();
-
-        @Override
-        public List<Coach> getAllCoaches() {
-            return coaches;
-        }
-
-        @Override
-        public void addNewCoach(Coach coach) {
-            coaches.add(coach);
-        }
     }
 
 }

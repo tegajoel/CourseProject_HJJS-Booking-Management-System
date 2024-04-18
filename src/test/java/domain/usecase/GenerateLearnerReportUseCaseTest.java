@@ -5,14 +5,12 @@ import domain.entity.Learner;
 import domain.entity.lesson.Lesson;
 import domain.entity.lesson.LessonStatus;
 import domain.entity.lesson.RegisteredLesson;
+import domain.mock.LearnerRepositoryMock;
 import domain.repository.LearnerRepository;
-import domain.util.Result;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -145,26 +143,4 @@ class GenerateLearnerReportUseCaseTest {
 
         assertEquals(3, useCase.getReportForAllLearners().size());
     }
-
-
-    private static class LearnerRepositoryMock implements LearnerRepository {
-        private final List<Learner> learners = new ArrayList<>();
-        @Override
-        public boolean addNewLearner(Learner learner) {
-            return learners.add(learner);
-        }
-
-        @Override
-        public List<Learner> getAllLearners() {
-            return learners;
-        }
-
-        @Override
-        public Result<Learner, Error> getLearnerById(int id) {
-            return null;
-        }
-    }
-
-
-
 }

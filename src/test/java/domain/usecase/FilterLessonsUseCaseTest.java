@@ -2,13 +2,12 @@ package domain.usecase;
 
 import domain.entity.Coach;
 import domain.entity.lesson.Lesson;
+import domain.mock.LessonRepositoryMock;
 import domain.repository.LessonRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -283,20 +282,4 @@ class FilterLessonsUseCaseTest {
 
         assertEquals(3, result.size());
     }
-
-
-    private static class LessonRepositoryMock implements LessonRepository {
-        private final List<Lesson> lessons = new ArrayList<>();
-
-        @Override
-        public List<Lesson> getAllLessons() {
-            return lessons;
-        }
-
-        @Override
-        public void addNewLesson(Lesson lesson) {
-            lessons.add(lesson);
-        }
-    }
-
 }

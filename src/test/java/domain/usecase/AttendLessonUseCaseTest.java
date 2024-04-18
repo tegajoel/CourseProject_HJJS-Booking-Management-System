@@ -34,13 +34,13 @@ class AttendLessonUseCaseTest {
     void attendLesson_unattendedLesson_succeeds() {
         testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
 
-        assertTrue(useCase.execute(testLesson, testLearner, reviewProvider).isSuccess());
+        assertTrue(useCase.attendLesson(testLesson, testLearner, reviewProvider).isSuccess());
     }
 
     @Test
     void attendLesson_succeeds_learnerStatusUpdatedToAttended() {
         testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
-        useCase.execute(testLesson, testLearner, reviewProvider);
+        useCase.attendLesson(testLesson, testLearner, reviewProvider);
 
         assertEquals(LessonStatus.ATTENDED, testLearner.getLessonStatus(testLesson));
     }
@@ -50,7 +50,7 @@ class AttendLessonUseCaseTest {
         testLearner.setGrade(2);
         testLesson.setGrade(2);
         testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
-        useCase.execute(testLesson, testLearner, reviewProvider);
+        useCase.attendLesson(testLesson, testLearner, reviewProvider);
 
         assertEquals(2, testLearner.getGrade());
     }
@@ -63,7 +63,7 @@ class AttendLessonUseCaseTest {
 
         LessonStatus expectedResult = testLearner.getLessonStatus(testLesson);
         reviewProvider.setReview(new Review("", -5));
-        useCase.execute(testLesson, testLearner, reviewProvider);
+        useCase.attendLesson(testLesson, testLearner, reviewProvider);
 
         assertEquals(expectedResult, testLearner.getLessonStatus(testLesson));
     }
@@ -76,7 +76,7 @@ class AttendLessonUseCaseTest {
 
         int currentGrade = testLearner.getGrade();
         reviewProvider.setReview(new Review("", -5));
-        useCase.execute(testLesson, testLearner, reviewProvider);
+        useCase.attendLesson(testLesson, testLearner, reviewProvider);
 
         assertEquals(currentGrade, testLearner.getGrade());
     }
@@ -86,7 +86,7 @@ class AttendLessonUseCaseTest {
         testLearner.setGrade(0);
         testLesson.setGrade(1);
         testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
-        useCase.execute(testLesson, testLearner, reviewProvider);
+        useCase.attendLesson(testLesson, testLearner, reviewProvider);
 
         assertEquals(1, testLearner.getGrade());
     }
@@ -96,7 +96,7 @@ class AttendLessonUseCaseTest {
         testLearner.setGrade(2);
         testLesson.setGrade(4);
         testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
-        useCase.execute(testLesson, testLearner, reviewProvider);
+        useCase.attendLesson(testLesson, testLearner, reviewProvider);
 
         assertEquals(4, testLearner.getGrade());
     }
@@ -106,7 +106,7 @@ class AttendLessonUseCaseTest {
         testLearner.setGrade(3);
         testLesson.setGrade(2);
         testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
-        useCase.execute(testLesson, testLearner, reviewProvider);
+        useCase.attendLesson(testLesson, testLearner, reviewProvider);
 
         assertEquals(3, testLearner.getGrade());
     }
@@ -115,25 +115,25 @@ class AttendLessonUseCaseTest {
     void attendLesson_lessonAlreadyAttended_fails() {
         testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.ATTENDED));
 
-        assertFalse(useCase.execute(testLesson, testLearner, reviewProvider).isSuccess());
+        assertFalse(useCase.attendLesson(testLesson, testLearner, reviewProvider).isSuccess());
     }
 
     @Test
     void attendLesson_lessonAlreadyAttended_failsWithCorrectError() {
         testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.ATTENDED));
-        var result = useCase.execute(testLesson, testLearner, reviewProvider);
+        var result = useCase.attendLesson(testLesson, testLearner, reviewProvider);
 
         assertEquals(AttendLessonUseCase.Error.LESSON_ALREADY_ATTENDED, result.getError());
     }
 
     @Test
     void attendLesson_unRegisteredLesson_fails() {
-        assertFalse(useCase.execute(testLesson, testLearner, reviewProvider).isSuccess());
+        assertFalse(useCase.attendLesson(testLesson, testLearner, reviewProvider).isSuccess());
     }
 
     @Test
     void attendLesson_unRegisteredLesson_failsWithCorrectError() {
-        var result = useCase.execute(testLesson, testLearner, reviewProvider);
+        var result = useCase.attendLesson(testLesson, testLearner, reviewProvider);
 
         assertEquals(AttendLessonUseCase.Error.LEARNER_NOT_REGISTERED_TO_LESSON, result.getError());
     }
@@ -141,7 +141,7 @@ class AttendLessonUseCaseTest {
     @Test
     void attendLesson_succeeds_provideFeedbackCalled() {
         testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
-        useCase.execute(testLesson, testLearner, reviewProvider);
+        useCase.attendLesson(testLesson, testLearner, reviewProvider);
 
         assertTrue(reviewProvider.numberOfTimesCalled > 0);
     }
@@ -152,7 +152,7 @@ class AttendLessonUseCaseTest {
 
         Review review = new Review("Great!", 5);
         reviewProvider.setReview(review);
-        useCase.execute(testLesson, testLearner, reviewProvider);
+        useCase.attendLesson(testLesson, testLearner, reviewProvider);
 
         assertTrue(testLesson.getReviews().contains(review));
     }
@@ -160,7 +160,7 @@ class AttendLessonUseCaseTest {
     @Test
     void attendLesson_succeeds_provideFeedbackCalledOnlyOnce() {
         testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
-        useCase.execute(testLesson, testLearner, reviewProvider);
+        useCase.attendLesson(testLesson, testLearner, reviewProvider);
 
         assertEquals(1, reviewProvider.numberOfTimesCalled);
     }
@@ -168,7 +168,7 @@ class AttendLessonUseCaseTest {
     @Test
     void attendLesson_fails_provideFeedbackNotCalled() {
         testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.ATTENDED));
-        useCase.execute(testLesson, testLearner, reviewProvider);
+        useCase.attendLesson(testLesson, testLearner, reviewProvider);
 
         assertEquals(0, reviewProvider.numberOfTimesCalled);
     }
@@ -179,7 +179,7 @@ class AttendLessonUseCaseTest {
         reviewProvider.setReview(new Review("Great Lesson!", 3));
 
 
-        assertTrue(useCase.execute(testLesson, testLearner, reviewProvider).isSuccess());
+        assertTrue(useCase.attendLesson(testLesson, testLearner, reviewProvider).isSuccess());
     }
 
     @Test
@@ -188,7 +188,7 @@ class AttendLessonUseCaseTest {
         reviewProvider.setReview(new Review("", 3));
 
 
-        assertFalse(useCase.execute(testLesson, testLearner, reviewProvider).isSuccess());
+        assertFalse(useCase.attendLesson(testLesson, testLearner, reviewProvider).isSuccess());
     }
 
     @Test
@@ -197,7 +197,7 @@ class AttendLessonUseCaseTest {
         reviewProvider.setReview(new Review("Great Lesson!", -3));
 
 
-        assertFalse(useCase.execute(testLesson, testLearner, reviewProvider).isSuccess());
+        assertFalse(useCase.attendLesson(testLesson, testLearner, reviewProvider).isSuccess());
     }
 
     @Test
@@ -206,7 +206,7 @@ class AttendLessonUseCaseTest {
         reviewProvider.setReview(new Review("Great Lesson!", 6));
 
 
-        assertFalse(useCase.execute(testLesson, testLearner, reviewProvider).isSuccess());
+        assertFalse(useCase.attendLesson(testLesson, testLearner, reviewProvider).isSuccess());
     }
 
     @Test
@@ -214,7 +214,7 @@ class AttendLessonUseCaseTest {
         testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
         reviewProvider.setReview(new Review("Great Lesson!", 6));
 
-        var result = useCase.execute(testLesson, testLearner, reviewProvider);
+        var result = useCase.attendLesson(testLesson, testLearner, reviewProvider);
 
         assertEquals(AttendLessonUseCase.Error.INVALID_REVIEW_RATING, result.getError());
     }
@@ -225,7 +225,7 @@ class AttendLessonUseCaseTest {
         reviewProvider.setReview(new Review("Great Lesson!", 0));
 
 
-        assertFalse(useCase.execute(testLesson, testLearner, reviewProvider).isSuccess());
+        assertFalse(useCase.attendLesson(testLesson, testLearner, reviewProvider).isSuccess());
     }
 
     @Test
@@ -233,7 +233,7 @@ class AttendLessonUseCaseTest {
         testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
         reviewProvider.setReview(new Review("Great Lesson!", 0));
 
-        var result = useCase.execute(testLesson, testLearner, reviewProvider);
+        var result = useCase.attendLesson(testLesson, testLearner, reviewProvider);
 
         assertEquals(AttendLessonUseCase.Error.INVALID_REVIEW_RATING, result.getError());
     }
@@ -243,7 +243,7 @@ class AttendLessonUseCaseTest {
         testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
         reviewProvider.setReview(new Review("Great Lesson!", -4));
 
-        var result = useCase.execute(testLesson, testLearner, reviewProvider);
+        var result = useCase.attendLesson(testLesson, testLearner, reviewProvider);
 
         assertEquals(AttendLessonUseCase.Error.INVALID_REVIEW_RATING, result.getError());
     }
@@ -253,7 +253,7 @@ class AttendLessonUseCaseTest {
         testLearner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
         reviewProvider.setReview(new Review("", 300));
 
-        var result = useCase.execute(testLesson, testLearner, reviewProvider);
+        var result = useCase.attendLesson(testLesson, testLearner, reviewProvider);
 
         assertEquals(AttendLessonUseCase.Error.EMPTY_REVIEW_MESSAGE, result.getError());
     }

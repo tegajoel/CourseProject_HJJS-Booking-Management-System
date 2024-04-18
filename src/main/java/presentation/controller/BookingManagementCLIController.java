@@ -1,10 +1,12 @@
 package presentation.controller;
 
-import domain.entity.Learner;
+import domain.entity.learner.Learner;
+import domain.repository.LearnerRepository;
 import domain.usecase.*;
 import domain.util.Result;
 import presentation.view.BookingManagementCLIView;
 import presentation.view.InputConsumer;
+import presentation.view.ReportPrinter;
 import presentation.view.widgets.optionpicker.OptionPickerStyle;
 import presentation.view.widgets.text.MessageType;
 
@@ -20,6 +22,8 @@ public class BookingManagementCLIController {
     private final GenerateLearnerReportUseCase generateLearnerReportUseCase;
     private final RegisterNewLearnerUseCase registerNewLearnerUseCase;
 
+    private final LearnerRepository learnerRepository;
+
     String nameBeingRegistered = null;
     String genderBeingRegistered = null;
     Integer ageBeingRegistered = null;
@@ -34,7 +38,8 @@ public class BookingManagementCLIController {
                                           FilterLessonsUseCase filterLessonsUseCase,
                                           GenerateCoachReportUseCase generateCoachReportUseCase,
                                           GenerateLearnerReportUseCase generateLearnerReportUseCase,
-                                          RegisterNewLearnerUseCase registerNewLearnerUseCase) {
+                                          RegisterNewLearnerUseCase registerNewLearnerUseCase,
+                                          LearnerRepository learnerRepository) {
         this.view = view;
         this.attendLessonUseCase = attendLessonUseCase;
         this.bookLessonUseCase = bookLessonUseCase;
@@ -43,6 +48,7 @@ public class BookingManagementCLIController {
         this.generateCoachReportUseCase = generateCoachReportUseCase;
         this.generateLearnerReportUseCase = generateLearnerReportUseCase;
         this.registerNewLearnerUseCase = registerNewLearnerUseCase;
+        this.learnerRepository = learnerRepository;
 
         initialize();
     }
@@ -71,8 +77,9 @@ public class BookingManagementCLIController {
                     onRegisterNewUser();
                 }
                 case 1 -> onManageBooking();
-                case 2 -> onPrintLearnerReport();
-                case 3 -> onPrintCoachReport();
+                case 2 -> onAttendSwimmingLesson();
+                case 3 -> onPrintLearnerReport();
+                case 4 -> onPrintCoachReport();
                 default -> {
                     view.displayMessage("Invalid Selection", MessageType.ERROR);
                     showMainMenuOptions();
@@ -81,8 +88,20 @@ public class BookingManagementCLIController {
         });
     }
 
-    private void showExitOption() {
+    private void showExitOrMainMenuOption() {
+        var options = List.of("Return to main menu", "Exit App");
+        view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, null, (index, value) -> {
+            if (index == 0){
+                showMainMenuOptions();
+            } else {
+                closeApp();
+            }
+        });
+    }
 
+    private void closeApp(){
+        view.displayMessage("Exiting...", MessageType.INFO);
+        System.exit(0);
     }
 
     private void onRegisterNewUser() {
@@ -181,6 +200,10 @@ public class BookingManagementCLIController {
         showMainMenuOptions();
     }
 
+    private void onAttendSwimmingLesson(){
+
+    }
+
     private void onManageBooking() {
 
     }
@@ -190,7 +213,37 @@ public class BookingManagementCLIController {
     }
 
     private void onPrintLearnerReport() {
+        var options = List.of("Print for all learners", "Print for specific learners");
+        view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, null, (index, value) -> {
+            if (index == 0){
+                String msg = ReportPrinter.prettyPrintLearnerReports(generateLearnerReportUseCase.getReportForAllLearners());
+                view.displayMessage(msg, MessageType.INFO);
+                showExitOrMainMenuOption();
+            } else {
+                view.requestUserInput("Please provide the id of the learner", data -> {
+                    if (data.trim().equals("0")){
+                        showMainMenuOptions();
+                        return InputConsumer.success;
+                    }
 
+                    try {
+                        int id = Integer.parseInt(data);
+                        var result = learnerRepository.getLearnerById(id);
+                        if (result.isSuccess()){
+                            String msg = ReportPrinter.prettyPrintLearnerReport(generateLearnerReportUseCase.getReportForLearner(result.getData()));
+                            view.displayMessage(msg, MessageType.INFO);
+                            showExitOrMainMenuOption();
+                            return InputConsumer.success;
+                        } else {
+                            view.displayMessage("\nEnter 0 to to return to the Main Menu", MessageType.INFO);
+                            return Result.error("No learner exits with this id.");
+                        }
+                    } catch (Exception e){
+                        return Result.error("Learner IDs only contain numbers");
+                    }
+                });
+            }
+        });
     }
 
     private void resetRegistrationDetails() {

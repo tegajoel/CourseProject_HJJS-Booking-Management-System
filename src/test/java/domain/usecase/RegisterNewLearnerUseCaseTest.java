@@ -26,14 +26,14 @@ class RegisterNewLearnerUseCaseTest {
     }
 
     @Test
-    public void addValidLearner_successReturned() {
+    public void registerLearner_ValidLearner_successReturned() {
         Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.registerLearner(validLearner);
 
         assertTrue(result.isSuccess());
     }
 
     @Test
-    public void addValidLearner_repositoryIncremented() {
+    public void registerLearner_ValidLearner_repositoryIncremented() {
         int currentRepoSize = repository.size();
         useCase.registerLearner(validLearner);
 
@@ -41,7 +41,7 @@ class RegisterNewLearnerUseCaseTest {
     }
 
     @Test
-    public void addLearner_onSuccess_leanerIDAssigned() {
+    public void registerLearner_onSuccess_leanerIDAssigned() {
         useCase.registerLearner(validLearner);
 
         assertDoesNotThrow(() -> {
@@ -50,7 +50,7 @@ class RegisterNewLearnerUseCaseTest {
     }
 
     @Test
-    public void addLearner_invalidAge_errorReturned() {
+    public void registerLearner_invalidAge_errorReturned() {
         Learner learner = validLearner;
         learner.setAge(60);
 
@@ -60,7 +60,7 @@ class RegisterNewLearnerUseCaseTest {
     }
 
     @Test
-    public void addInvalidLearner_repositorySizeSame() {
+    public void registerLearner_invalidLearner_repositorySizeSame() {
         int currentRepoSize = repository.size();
         Learner invalidLEarner = validLearner;
         invalidLEarner.setAge(60);
@@ -70,7 +70,7 @@ class RegisterNewLearnerUseCaseTest {
     }
 
     @Test
-    public void addLearner_invalidGrade_errorReturned() {
+    public void registerLearner_invalidGrade_errorReturned() {
         Learner learner = validLearner;
         learner.setGrade(6);
 
@@ -80,7 +80,7 @@ class RegisterNewLearnerUseCaseTest {
     }
 
     @Test
-    public void addLearner_invalidPhoneNumber_errorReturned() {
+    public void registerLearner_invalidPhoneNumber_errorReturned() {
         Learner learner = validLearner;
         learner.setPhoneNumber("");
 
@@ -90,7 +90,7 @@ class RegisterNewLearnerUseCaseTest {
     }
 
     @Test
-    public void addLearner_invalidEmergencyNumber_errorReturned() {
+    public void registerLearner_invalidEmergencyNumber_errorReturned() {
         Learner learner = validLearner;
         learner.setEmergencyContactNumber("");
 

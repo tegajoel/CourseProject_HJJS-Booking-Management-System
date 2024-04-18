@@ -10,6 +10,19 @@ import java.util.List;
 public class InMemLearnersRepository implements LearnerRepository {
     private final List<Learner> learners = new ArrayList<>();
 
+    private static InMemLearnersRepository INSTANCE = null;
+
+    public static InMemLearnersRepository getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new InMemLearnersRepository();
+        }
+        return INSTANCE;
+    }
+
+    private InMemLearnersRepository(){
+
+    }
+
     @Override
     public boolean addNewLearner(Learner learner) {
         return learners.add(learner);

@@ -9,6 +9,19 @@ import java.util.List;
 public class InMemLessonRepository implements LessonRepository {
     private final List<Lesson> lessons = new ArrayList<>();
 
+    private static InMemLessonRepository INSTANCE = null;
+
+    public static InMemLessonRepository getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new InMemLessonRepository();
+        }
+        return INSTANCE;
+    }
+
+    private InMemLessonRepository(){
+
+    }
+
     @Override
     public List<Lesson> getAllLessons() {
         return lessons;

@@ -16,10 +16,10 @@ public class RegisterNewLearnerUseCase {
      * Register a new learner
      *
      * @param learner learner to be registered
-     * @return Result with {@link Result#NO_VALUE} on success,
+     * @return {@link Result#success(Object)} Learner ID on success,
      * otherwise, {@link Result#error(Object)} with {@link Error} as its error data
      */
-    public Result<Object, Error> registerLearner(Learner learner) {
+    public Result<Integer, Error> registerLearner(Learner learner) {
         if (learner.getAge() < 4 || learner.getAge() > 11) {
             return Result.error(Error.INVALID_AGE);
         }
@@ -33,7 +33,7 @@ public class RegisterNewLearnerUseCase {
         }
 
         if (repository.addNewLearner(learner.setId(IdGenerator.generateId(learner)))) {
-            return Result.success(Result.NO_VALUE);
+            return Result.success(learner.getId());
         } else {
             return Result.error(Error.REPOSITORY_ERROR);
         }

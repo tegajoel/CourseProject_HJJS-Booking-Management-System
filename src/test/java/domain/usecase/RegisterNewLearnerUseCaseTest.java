@@ -27,9 +27,16 @@ class RegisterNewLearnerUseCaseTest {
 
     @Test
     public void registerLearner_ValidLearner_successReturned() {
-        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.registerLearner(validLearner);
+        Result<Integer, RegisterNewLearnerUseCase.Error> result = useCase.registerLearner(validLearner);
 
         assertTrue(result.isSuccess());
+    }
+
+    @Test
+    public void registerLearner_ValidLearner_successReturnedWithUserId() {
+        Result<Integer, RegisterNewLearnerUseCase.Error> result = useCase.registerLearner(validLearner);
+
+        assertEquals(validLearner.getId(), result.getData());
     }
 
     @Test
@@ -54,7 +61,7 @@ class RegisterNewLearnerUseCaseTest {
         Learner learner = validLearner;
         learner.setAge(60);
 
-        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.registerLearner(learner);
+        Result<Integer, RegisterNewLearnerUseCase.Error> result = useCase.registerLearner(learner);
         assertFalse(result.isSuccess());
         assertEquals(RegisterNewLearnerUseCase.Error.INVALID_AGE, result.getError());
     }
@@ -74,7 +81,7 @@ class RegisterNewLearnerUseCaseTest {
         Learner learner = validLearner;
         learner.setGrade(6);
 
-        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.registerLearner(learner);
+        Result<Integer, RegisterNewLearnerUseCase.Error> result = useCase.registerLearner(learner);
         assertFalse(result.isSuccess());
         assertEquals(RegisterNewLearnerUseCase.Error.INVALID_GRADE, result.getError());
     }
@@ -84,7 +91,7 @@ class RegisterNewLearnerUseCaseTest {
         Learner learner = validLearner;
         learner.setPhoneNumber("");
 
-        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.registerLearner(learner);
+        Result<Integer, RegisterNewLearnerUseCase.Error> result = useCase.registerLearner(learner);
         assertFalse(result.isSuccess());
         assertEquals(RegisterNewLearnerUseCase.Error.INVALID_PHONE_NUMBER, result.getError());
     }
@@ -94,7 +101,7 @@ class RegisterNewLearnerUseCaseTest {
         Learner learner = validLearner;
         learner.setEmergencyContactNumber("");
 
-        Result<Object, RegisterNewLearnerUseCase.Error> result = useCase.registerLearner(learner);
+        Result<Integer, RegisterNewLearnerUseCase.Error> result = useCase.registerLearner(learner);
         assertFalse(result.isSuccess());
         assertEquals(RegisterNewLearnerUseCase.Error.INVALID_PHONE_NUMBER, result.getError());
     }

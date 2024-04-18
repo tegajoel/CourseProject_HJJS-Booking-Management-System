@@ -13,8 +13,8 @@ public interface BookingManagementCLIView {
 
     void displayMessage(String message, MessageType messageType);
 
-    void requestUserInput(String optionalPrompt, InputConsumer inputConsumer);
+    void requestUserInput(String prompt, InputConsumer inputConsumer);
 
-    void showOptionsPicker(List<String> options , OptionPickerStyle style, OptionPickedListener listener);
+    void showOptionsPicker(List<String> options , OptionPickerStyle style, String optionalHeader, OptionPickedListener listener);
 
 }

@@ -31,14 +31,14 @@ class CancelLessonUseCaseTest {
     public void cancelLesson_registeredAndBookedLesson_Succeeds() {
         learner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
 
-        assertTrue(useCase.execute(testLesson, learner).isSuccess());
+        assertTrue(useCase.cancelLesson(testLesson, learner).isSuccess());
     }
 
     @Test
     public void cancelLesson_succeeds_lessonStatusUpdatedToCancelled() {
         learner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.BOOKED));
 
-        useCase.execute(testLesson, learner);
+        useCase.cancelLesson(testLesson, learner);
         assertEquals(LessonStatus.CANCELLED, learner.getLessonStatus(testLesson));
     }
 
@@ -46,38 +46,38 @@ class CancelLessonUseCaseTest {
     public void cancelLesson_registeredAndCancelledLesson_fails() {
         learner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.CANCELLED));
 
-        assertFalse(useCase.execute(testLesson, learner).isSuccess());
+        assertFalse(useCase.cancelLesson(testLesson, learner).isSuccess());
     }
 
     @Test
     public void cancelLesson_registeredAndAttendedLesson_fails() {
         learner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.ATTENDED));
 
-        assertFalse(useCase.execute(testLesson, learner).isSuccess());
+        assertFalse(useCase.cancelLesson(testLesson, learner).isSuccess());
     }
 
     @Test
     public void cancelLesson_notRegistered_fails() {
-        assertFalse(useCase.execute(testLesson, learner).isSuccess());
+        assertFalse(useCase.cancelLesson(testLesson, learner).isSuccess());
     }
 
     @Test
     public void cancelLesson_notRegistered_failsWithCorrectError() {
-        assertEquals(CancelLessonUseCase.Error.NO_BOOKING_FOR_LESSON, useCase.execute(testLesson, learner).getError());
+        assertEquals(CancelLessonUseCase.Error.NO_BOOKING_FOR_LESSON, useCase.cancelLesson(testLesson, learner).getError());
     }
 
     @Test
     public void cancelLesson_registeredAndCancelledLesson_failsWithCorrectError() {
         learner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.CANCELLED));
 
-        assertEquals(CancelLessonUseCase.Error.LESSON_ALREADY_CANCELLED, useCase.execute(testLesson, learner).getError());
+        assertEquals(CancelLessonUseCase.Error.LESSON_ALREADY_CANCELLED, useCase.cancelLesson(testLesson, learner).getError());
     }
 
     @Test
     public void cancelLesson_registeredAndAttendedLesson_failsWithCorrectError() {
         learner.registerNewLesson(new RegisteredLesson(testLesson, LessonStatus.ATTENDED));
 
-        assertEquals(CancelLessonUseCase.Error.LESSON_ALREADY_ATTENDED, useCase.execute(testLesson, learner).getError());
+        assertEquals(CancelLessonUseCase.Error.LESSON_ALREADY_ATTENDED, useCase.cancelLesson(testLesson, learner).getError());
     }
 
 

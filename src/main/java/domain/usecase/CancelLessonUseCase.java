@@ -14,7 +14,7 @@ public class CancelLessonUseCase {
      * @param learner        the learner
      * @return Result with empty object on success, and {@link Error} when an error occurs
      */
-    public Result<Object, Error> execute(Lesson lessonToCancel, Learner learner) {
+    public Result<Object, Error> cancelLesson(Lesson lessonToCancel, Learner learner) {
         if (!learner.hasLessonRegistered(lessonToCancel)) {
             return Result.error(Error.NO_BOOKING_FOR_LESSON);
         }

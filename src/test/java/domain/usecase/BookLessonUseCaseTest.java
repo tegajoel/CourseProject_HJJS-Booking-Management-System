@@ -28,26 +28,26 @@ class BookLessonUseCaseTest {
 
     @Test
     public void bookLesson_sameGrade_succeeds() {
-        assertTrue(useCase.execute(testLesson, learner).isSuccess());
+        assertTrue(useCase.bookLesson(testLesson, learner).isSuccess());
     }
 
     @Test
     public void bookLesson_succeeds_leanerAddedToLesson() {
-        useCase.execute(testLesson, learner);
+        useCase.bookLesson(testLesson, learner);
 
         assertTrue(testLesson.getRegisteredLearners().contains(learner));
     }
 
     @Test
     public void bookLesson_succeeds_lessonAddedToLearner() {
-        useCase.execute(testLesson, learner);
+        useCase.bookLesson(testLesson, learner);
 
         assertTrue(learner.hasLessonRegistered(testLesson));
     }
 
     @Test
     public void bookLesson_succeeds_hasInitialLessonStatusAsBooked() {
-        useCase.execute(testLesson, learner);
+        useCase.bookLesson(testLesson, learner);
 
         assertEquals(LessonStatus.BOOKED, learner.getLessonStatus(testLesson));
     }
@@ -58,7 +58,7 @@ class BookLessonUseCaseTest {
         testLesson.setGrade(4);
         learner.setGrade(3);
 
-        assertTrue(useCase.execute(testLesson, learner).isSuccess());
+        assertTrue(useCase.bookLesson(testLesson, learner).isSuccess());
     }
 
     @Test
@@ -66,7 +66,7 @@ class BookLessonUseCaseTest {
         testLesson.setGrade(4);
         learner.setGrade(2);
 
-        assertFalse(useCase.execute(testLesson, learner).isSuccess());
+        assertFalse(useCase.bookLesson(testLesson, learner).isSuccess());
     }
 
     @Test
@@ -74,7 +74,7 @@ class BookLessonUseCaseTest {
         testLesson.setGrade(1);
         learner.setGrade(3);
 
-        assertFalse(useCase.execute(testLesson, learner).isSuccess());
+        assertFalse(useCase.bookLesson(testLesson, learner).isSuccess());
     }
 
     @Test
@@ -82,7 +82,7 @@ class BookLessonUseCaseTest {
         testLesson.setGrade(1);
         learner.setGrade(3);
 
-        var result = useCase.execute(testLesson, learner);
+        var result = useCase.bookLesson(testLesson, learner);
         assertEquals(BookLessonUseCase.Error.LESSON_BELOW_LEARNER_GRADE, result.getError());
     }
 
@@ -92,21 +92,21 @@ class BookLessonUseCaseTest {
         testLesson.setGrade(4);
         learner.setGrade(2);
 
-        var result = useCase.execute(testLesson, learner);
+        var result = useCase.bookLesson(testLesson, learner);
         assertEquals(BookLessonUseCase.Error.LESSON_ABOVE_LEARNER_GRADE, result.getError());
     }
 
     @Test
     public void bookLesson_duplicateBooking_fails() {
-        useCase.execute(testLesson, learner);
-        assertFalse(useCase.execute(testLesson, learner).isSuccess());
+        useCase.bookLesson(testLesson, learner);
+        assertFalse(useCase.bookLesson(testLesson, learner).isSuccess());
     }
 
     @Test
     public void bookLesson_duplicateBooking_failsWithCorrectError() {
-        useCase.execute(testLesson, learner);
+        useCase.bookLesson(testLesson, learner);
 
-        var result = useCase.execute(testLesson, learner);
+        var result = useCase.bookLesson(testLesson, learner);
         assertEquals(BookLessonUseCase.Error.DUPLICATE_BOOKING, result.getError());
     }
 
@@ -118,12 +118,12 @@ class BookLessonUseCaseTest {
         Learner learner4 = new Learner("John doe4", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
         Learner learner5 = new Learner("John doe5", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
 
-        useCase.execute(testLesson, learner1);
-        useCase.execute(testLesson, learner2);
-        useCase.execute(testLesson, learner3);
-        useCase.execute(testLesson, learner4);
+        useCase.bookLesson(testLesson, learner1);
+        useCase.bookLesson(testLesson, learner2);
+        useCase.bookLesson(testLesson, learner3);
+        useCase.bookLesson(testLesson, learner4);
 
-        assertFalse(useCase.execute(testLesson, learner5).isSuccess());
+        assertFalse(useCase.bookLesson(testLesson, learner5).isSuccess());
     }
 
     @Test
@@ -134,13 +134,13 @@ class BookLessonUseCaseTest {
         Learner learner4 = new Learner("John doe4", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
         Learner learner5 = new Learner("John doe5", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
 
-        useCase.execute(testLesson, learner1);
-        useCase.execute(testLesson, learner2);
-        useCase.execute(testLesson, learner3);
-        useCase.execute(testLesson, learner4);
+        useCase.bookLesson(testLesson, learner1);
+        useCase.bookLesson(testLesson, learner2);
+        useCase.bookLesson(testLesson, learner3);
+        useCase.bookLesson(testLesson, learner4);
 
 
-        var result = useCase.execute(testLesson, learner5);
+        var result = useCase.bookLesson(testLesson, learner5);
         assertEquals(BookLessonUseCase.Error.LESSON_FULLY_BOOKED, result.getError());
     }
 
@@ -152,13 +152,13 @@ class BookLessonUseCaseTest {
         Learner learner4 = new Learner("John doe4", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
         Learner learner5 = new Learner("John doe5", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
 
-        useCase.execute(testLesson, learner1);
-        useCase.execute(testLesson, learner2);
-        useCase.execute(testLesson, learner3);
-        useCase.execute(testLesson, learner4);
+        useCase.bookLesson(testLesson, learner1);
+        useCase.bookLesson(testLesson, learner2);
+        useCase.bookLesson(testLesson, learner3);
+        useCase.bookLesson(testLesson, learner4);
 
         learner5.updateRegisteredLessonStatus(testLesson, LessonStatus.CANCELLED);
 
-        assertFalse(useCase.execute(testLesson, learner5).isSuccess());
+        assertFalse(useCase.bookLesson(testLesson, learner5).isSuccess());
     }
 }

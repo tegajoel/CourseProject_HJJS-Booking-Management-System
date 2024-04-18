@@ -15,7 +15,7 @@ public class BookLessonUseCase {
      * @return Result with {@link Result#NO_VALUE} on success,
      * otherwise, {@link Result#error(Object)} with {@link Error} as its error data
      */
-    public Result<Object, Error> execute(Lesson lesson, Learner learner) {
+    public Result<Object, Error> bookLesson(Lesson lesson, Learner learner) {
         if (learner.getGrade() + 1 < lesson.getGrade()) {
             return Result.error(Error.LESSON_ABOVE_LEARNER_GRADE);
         }

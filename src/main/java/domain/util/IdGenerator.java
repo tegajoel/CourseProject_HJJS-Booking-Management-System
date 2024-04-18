@@ -1,6 +1,6 @@
 package domain.util;
 
-import domain.entity.Learner;
+import domain.entity.learner.Learner;
 import domain.entity.lesson.Lesson;
 
 import java.util.Random;

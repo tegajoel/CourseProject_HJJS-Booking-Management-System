@@ -1,6 +1,6 @@
 package domain.mock;
 
-import domain.entity.Coach;
+import domain.entity.coach.Coach;
 import domain.repository.CoachRepository;
 
 import java.util.ArrayList;

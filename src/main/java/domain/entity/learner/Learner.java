@@ -1,4 +1,4 @@
-package domain.entity;
+package domain.entity.learner;
 
 import domain.entity.lesson.Lesson;
 import domain.entity.lesson.LessonStatus;

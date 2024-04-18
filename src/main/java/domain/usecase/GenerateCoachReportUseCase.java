@@ -1,7 +1,8 @@
 package domain.usecase;
 
-import domain.entity.Coach;
+import domain.entity.coach.Coach;
 import domain.entity.Rating;
+import domain.entity.coach.CoachReport;
 import domain.entity.lesson.Lesson;
 import domain.repository.CoachRepository;
 import domain.util.LessonUtil;
@@ -43,14 +44,5 @@ public class GenerateCoachReportUseCase {
      */
     public List<CoachReport> getReportForAllCoaches() {
         return coachRepository.getAllCoaches().stream().map(this::getReportForCoach).toList();
-    }
-
-    public record CoachReport(
-            String coachName,
-            int numberOfLessonsTaught,
-            List<Lesson> lessonsTaught,
-            Rating averageLessonRating,
-            List<Map<Rating, Lesson>> averageRatingPerLesson
-    ) {
     }
 }

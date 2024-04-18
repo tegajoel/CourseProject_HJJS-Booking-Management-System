@@ -1,6 +1,7 @@
 package domain.usecase;
 
-import domain.entity.Learner;
+import domain.entity.learner.Learner;
+import domain.entity.learner.LearnerReport;
 import domain.entity.lesson.Lesson;
 import domain.entity.lesson.LessonStatus;
 import domain.entity.lesson.RegisteredLesson;
@@ -40,18 +41,5 @@ public class GenerateLearnerReportUseCase {
         learnerRepository.getAllLearners().forEach(learner -> result.add(getReportForLearner(learner)));
 
         return result;
-    }
-
-    public record LearnerReport(
-            String learnerName,
-            int learnerAge,
-            String learnerGender,
-            int currentGrade,
-            int totalRegisteredLessons,
-            List<Lesson> bookedLessons,
-            List<Lesson> attendedLessons,
-            List<Lesson> cancelledLessons
-    ) {
-
     }
 }

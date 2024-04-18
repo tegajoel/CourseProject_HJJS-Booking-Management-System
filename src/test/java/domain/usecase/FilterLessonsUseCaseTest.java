@@ -1,6 +1,6 @@
 package domain.usecase;
 
-import domain.entity.Coach;
+import domain.entity.coach.Coach;
 import domain.entity.lesson.Lesson;
 import domain.mock.LessonRepositoryMock;
 import domain.repository.LessonRepository;

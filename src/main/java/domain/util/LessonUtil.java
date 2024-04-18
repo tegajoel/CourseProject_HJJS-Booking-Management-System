@@ -1,6 +1,6 @@
 package domain.util;
 
-import domain.entity.Coach;
+import domain.entity.coach.Coach;
 import domain.entity.Rating;
 import domain.entity.Review;
 import domain.entity.lesson.Lesson;

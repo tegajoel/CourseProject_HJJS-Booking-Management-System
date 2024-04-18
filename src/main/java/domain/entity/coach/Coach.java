@@ -1,4 +1,4 @@
-package domain.entity;
+package domain.entity.coach;
 
 import domain.entity.lesson.Lesson;
 

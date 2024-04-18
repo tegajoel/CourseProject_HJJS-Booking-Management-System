@@ -1,6 +1,6 @@
 package domain.usecase;
 
-import domain.entity.Learner;
+import domain.entity.learner.Learner;
 import domain.entity.lesson.Lesson;
 import domain.entity.lesson.LessonStatus;
 import domain.entity.lesson.RegisteredLesson;

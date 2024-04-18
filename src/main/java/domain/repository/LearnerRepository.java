@@ -1,6 +1,6 @@
 package domain.repository;
 
-import domain.entity.Learner;
+import domain.entity.learner.Learner;
 import domain.util.Result;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package domain.repository;
 
-import domain.entity.Coach;
+import domain.entity.coach.Coach;
 
 import java.util.List;
 

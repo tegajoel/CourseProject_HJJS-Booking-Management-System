@@ -1,6 +1,6 @@
 package data;
 
-import domain.entity.Learner;
+import domain.entity.learner.Learner;
 import domain.repository.LearnerRepository;
 import domain.util.Result;
 

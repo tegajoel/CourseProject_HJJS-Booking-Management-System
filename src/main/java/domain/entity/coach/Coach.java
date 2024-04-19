@@ -12,7 +12,11 @@ public class Coach {
 
     public Coach(String name, List<Lesson> assignedLessons) {
         this.name = name;
-        this.assignedLessons = assignedLessons;
+        this.assignedLessons = new ArrayList<>();
+        if (!assignedLessons.isEmpty()){
+            // this allows items to be added via List.Of()/Arrays.asList()
+            this.assignedLessons.addAll(assignedLessons);
+        }
     }
 
     public Coach(String name) {

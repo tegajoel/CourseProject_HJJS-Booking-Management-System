@@ -31,9 +31,13 @@ public class Lesson {
         this.grade = grade;
         this.coach = coach;
         this.lessonDate = lessonDate;
-        this.registeredLearners = registeredLearners;
+        this.registeredLearners = new ArrayList<>();
         this.reviews = reviews;
         coach.assignLesson(this);
+
+        if (!registeredLearners.isEmpty()){
+            this.registeredLearners.addAll(registeredLearners);
+        }
     }
 
     /**

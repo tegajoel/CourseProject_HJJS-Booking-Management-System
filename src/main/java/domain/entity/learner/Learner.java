@@ -24,7 +24,11 @@ public class Learner {
         this.grade = grade;
         this.phoneNumber = phoneNumber;
         this.emergencyContactNumber = emergencyContactNumber;
-        this.registeredLessons = registeredLessons;
+        this.registeredLessons = new ArrayList<>();
+        if (!registeredLessons.isEmpty()){
+            // this allows items to be added via List.Of()/Arrays.asList()
+            this.registeredLessons.addAll(registeredLessons);
+        }
     }
 
     public Learner(String name, String gender, int age, int grade, String phoneNumber, String emergencyContactNumber) {

@@ -60,6 +60,11 @@ public class ReportPrinter {
         sb.append("|               Coach Reports List                |\n");
         sb.append("+-------------------------------------------------+\n");
 
+        if (reports.isEmpty()) {
+            sb.append("+-------------- NO REPORTS TO SHOW ---------------+\n");
+            sb.append("+-------------------------------------------------+\n");
+        }
+
         for (CoachReport report : reports) {
             sb.append(prettyPrintCoachReport(report));
             sb.append("+-------------------------------------------------+\n");

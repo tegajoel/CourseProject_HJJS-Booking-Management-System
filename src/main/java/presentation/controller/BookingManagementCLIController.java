@@ -124,10 +124,11 @@ public class BookingManagementCLIController {
                     onRegisterNewUser();
                 }
                 case 1 -> onBookSwimmingLesson();
-                case 2 -> onManageBooking();
+                case 2 -> onManageOrCancelBooking();
                 case 3 -> onAttendSwimmingLesson();
                 case 4 -> onPrintLearnerReport();
                 case 5 -> onPrintCoachReport();
+                case 6 -> onDisplayAllLearners();
                 default -> {
                     view.displayMessage("Invalid Selection", MessageType.ERROR);
                     showMainMenuOptions();
@@ -160,22 +161,6 @@ public class BookingManagementCLIController {
                 }
             });
         });
-    }
-
-    private void showExitOrMainMenuOption() {
-        var options = List.of("Return to Main menu", "Exit App");
-        view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, null, (index, value) -> {
-            if (index == 0) {
-                showMainMenuOptions();
-            } else {
-                closeApp();
-            }
-        });
-    }
-
-    private void closeApp() {
-        view.displayMessage("Exiting...", MessageType.INFO);
-        System.exit(0);
     }
 
     private void onRegisterNewUser() {
@@ -315,6 +300,93 @@ public class BookingManagementCLIController {
         });
     }
 
+    private void onManageOrCancelBooking() {
+        requestLearnerById(learner -> {
+            if (learner.getRegisteredLessons().isEmpty()) {
+                view.displayMessage("You have not yet booked any lesson to cancel or amend", MessageType.ERROR);
+                var options = List.of("Book a lesson", "Return to Main menu", "Exit App");
+                view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, "Choose an option", (index, value) -> {
+                    switch (index) {
+                        case 0 -> onBookSwimmingLesson();
+                        case 1 -> showMainMenuOptions();
+                        case 2 -> closeApp();
+                    }
+                });
+            } else {
+//                show
+            }
+        });
+
+    }
+
+    private void onPrintCoachReport() {
+        var options = List.of("Print for all coaches", "Print for a specific coach");
+        view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, null, (index, value) -> {
+            if (index == 0) {
+                String msg = ReportPrinter.prettyPrintCoachReports(generateCoachReportUseCase.getReportForAllCoaches());
+                view.displayMessage(msg, MessageType.INFO);
+                showExitOrMainMenuOption();
+            } else {
+                getCoachFromAllCoaches("Please select a coach", coach -> {
+                    String msg = ReportPrinter.prettyPrintCoachReport(generateCoachReportUseCase.getReportForCoach(coach));
+                    view.displayMessage(msg, MessageType.INFO);
+                    showExitOrMainMenuOption();
+                });
+            }
+        });
+    }
+
+    private void onPrintLearnerReport() {
+        var options = List.of("Print for all learners", "Print for a specific learner");
+        view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, null, (index, value) -> {
+            if (index == 0) {
+                String msg = ReportPrinter.prettyPrintLearnerReports(generateLearnerReportUseCase.getReportForAllLearners());
+                view.displayMessage(msg, MessageType.INFO);
+                showExitOrMainMenuOption();
+            } else {
+                requestLearnerById(learner -> {
+                    String msg = ReportPrinter.prettyPrintLearnerReport(generateLearnerReportUseCase.getReportForLearner(learner));
+                    view.displayMessage(msg, MessageType.INFO);
+                    showExitOrMainMenuOption();
+                });
+            }
+        });
+    }
+
+    private void onDisplayAllLearners() {
+        var learners = learnerRepository.getAllLearners();
+        if (learners.isEmpty()) {
+            String msg = """
+
+                    +-------------------------------------------------+
+                    |              No Registered Learner              |
+                    +-------------------------------------------------+
+                    """;
+
+            view.displayMessage(msg, MessageType.INFO);
+        } else {
+            learners.forEach(this::printLearnerDetails);
+        }
+
+        showExitOrMainMenuOption();
+    }
+
+    private void closeApp() {
+        view.displayMessage("Exiting...", MessageType.INFO);
+        System.exit(0);
+    }
+
+    private void showExitOrMainMenuOption() {
+        var options = List.of("Return to Main menu", "Exit App");
+        view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, null, (index, value) -> {
+            if (index == 0) {
+                showMainMenuOptions();
+            } else {
+                closeApp();
+            }
+        });
+    }
+
     private void requestLearnerById(Consumer<Learner> consumer) {
         view.requestUserInput("Please enter a learner ID", data -> {
             if (data.trim().equals("0")) {
@@ -348,7 +420,7 @@ public class BookingManagementCLIController {
     }
 
     private void requestLessonFromAllLessons(Consumer<Lesson> lessonConsumer) {
-        showOptionToPickLesson(lessons -> {
+        showOptionToPickLessonFromAllLessons(lessons -> {
             if (lessons.isEmpty()) {
                 view.displayMessage("There are no lessons to choose from", MessageType.INFO);
                 showExitOrMainMenuOption();
@@ -359,7 +431,7 @@ public class BookingManagementCLIController {
         });
     }
 
-    private void showOptionToPickLesson(Consumer<List<Lesson>> caller) {
+    private void showOptionToPickLessonFromAllLessons(Consumer<List<Lesson>> caller) {
         var options = List.of("By Swimming Grade", "By Coach", "By Day");
         view.showOptionsPicker(
                 options,
@@ -449,7 +521,7 @@ public class BookingManagementCLIController {
         sb.append(lesson.getName());
         sb.append(" (Grade: ").append(lesson.getGrade());
         sb.append(", Date: ").append(formatLessonDate(lesson));
-        sb.append(", Time: " + "4-5pm"); // TODO: 4/19/2024  get lesson time)
+        sb.append(", Time: ").append(lesson.getLessonTime());
         sb.append(", Average Rating: ").append(averageRating.hasRating() ? averageRating.getRatingValue() : "No rating yet").append(")");
         if (showLessonCapacity) {
             int activeLessons = lesson.getRegisteredLearners().stream().filter(learner -> learner.getLessonStatus(lesson) != LessonStatus.CANCELLED).toList().size();
@@ -459,6 +531,40 @@ public class BookingManagementCLIController {
         return sb.toString();
     }
 
+    private Review provideLessonReview() {
+        final boolean[] hasCompletedReview = {false};
+        Review review = new Review("", 0);
+        var options = List.of("Very dissatisfied", "Dissatisfied", "Ok", "Satisfied", "Very Satisfied");
+
+        view.displayMessage("Please leave a review for this lesson", MessageType.INFO);
+
+        view.requestUserInput("Review Message", data -> {
+            review.updateMessage(data);
+            view.showOptionsPicker(
+                    options,
+                    OptionPickerStyle.HORIZONTAL,
+                    "How would you rate this lesson?",
+                    (index, value) -> {
+                        review.updateRating(index + 1);
+                        hasCompletedReview[0] = true;
+                    });
+            return InputConsumer.success;
+        });
+
+        while (!hasCompletedReview[0]) {
+            // delay until we have received the review
+        }
+
+        return review;
+
+    }
+
+    private String formatLessonDate(Lesson lesson) {
+        String day = lesson.getLessonDate().getDayOfWeek().name();
+        day = day.substring(0, 1).toUpperCase() + day.substring(1).toLowerCase(); //capitalize
+        return day;
+    }
+
     private void printBookingDetails(Learner learner, Lesson lesson) {
         StringBuilder sb = new StringBuilder();
         sb.append("\n+-------------------------------------------------+\n");
@@ -466,7 +572,7 @@ public class BookingManagementCLIController {
         sb.append("+-------------------------------------------------+\n");
         sb.append(String.format("| Lesson ID: %-36d |\n", lesson.getId()));
         sb.append(String.format("| Lesson Name: %-34s |\n", lesson.getName()));
-        sb.append(String.format("| Lesson Date: %-34s |\n", formatLessonDate(lesson)));
+        sb.append(String.format("| Lesson Date: %-34s |\n", (formatLessonDate(lesson) + ", " + lesson.getLessonTime())));
         sb.append(String.format("| Lesson Grade: %-33s |\n", lesson.getGrade()));
         sb.append(String.format("| Your current Grade: %-27d |\n", learner.getGrade()));
         if (lesson.getGrade() > learner.getGrade()) {
@@ -478,12 +584,6 @@ public class BookingManagementCLIController {
         sb.append("+-------------------------------------------------+\n");
 
         view.displayMessage(sb.toString(), MessageType.INFO);
-    }
-
-    private String formatLessonDate(Lesson lesson) {
-        String day = lesson.getLessonDate().getDayOfWeek().name();
-        day = day.substring(0, 1).toUpperCase() + day.substring(1).toLowerCase(); //capitalize
-        return day;
     }
 
     private void printSuccessfulLearnerRegistrationDetails(Learner learner) {
@@ -521,73 +621,6 @@ public class BookingManagementCLIController {
         view.displayMessage(sb.toString(), MessageType.INFO);
     }
 
-    private Review provideLessonReview() {
-        final boolean[] hasCompletedReview = {false};
-        Review review = new Review("", 0);
-        var options = List.of("Very dissatisfied", "Dissatisfied", "Ok", "Satisfied", "Very Satisfied");
-
-        view.displayMessage("Please leave a review for this lesson", MessageType.INFO);
-
-        view.requestUserInput("Review Message", data -> {
-            review.updateMessage(data);
-            view.showOptionsPicker(
-                    options,
-                    OptionPickerStyle.HORIZONTAL,
-                    "How would you rate this lesson?",
-                    (index, value) -> {
-                        review.updateRating(index + 1);
-                        hasCompletedReview[0] = true;
-                    });
-            return InputConsumer.success;
-        });
-
-        while (!hasCompletedReview[0]) {
-            // delay until we have received the review
-        }
-
-        return review;
-
-    }
-
-
-    private void onManageBooking() {
-
-    }
-
-    private void onPrintCoachReport() {
-        var options = List.of("Print for all coaches", "Print for a specific coach");
-        view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, null, (index, value) -> {
-            if (index == 0) {
-                String msg = ReportPrinter.prettyPrintCoachReports(generateCoachReportUseCase.getReportForAllCoaches());
-                view.displayMessage(msg, MessageType.INFO);
-                showExitOrMainMenuOption();
-            } else {
-                getCoachFromAllCoaches("Please select a coach", coach -> {
-                    String msg = ReportPrinter.prettyPrintCoachReport(generateCoachReportUseCase.getReportForCoach(coach));
-                    view.displayMessage(msg, MessageType.INFO);
-                    showExitOrMainMenuOption();
-                });
-            }
-        });
-    }
-
-    private void onPrintLearnerReport() {
-        var options = List.of("Print for all learners", "Print for a specific learner");
-        view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, null, (index, value) -> {
-            if (index == 0) {
-                String msg = ReportPrinter.prettyPrintLearnerReports(generateLearnerReportUseCase.getReportForAllLearners());
-                view.displayMessage(msg, MessageType.INFO);
-                showExitOrMainMenuOption();
-            } else {
-                requestLearnerById(learner -> {
-                    String msg = ReportPrinter.prettyPrintLearnerReport(generateLearnerReportUseCase.getReportForLearner(learner));
-                    view.displayMessage(msg, MessageType.INFO);
-                    showExitOrMainMenuOption();
-                });
-            }
-        });
-    }
-
     private void resetRegistrationDetails() {
         nameBeingRegistered = null;
         genderBeingRegistered = null;
@@ -595,6 +628,22 @@ public class BookingManagementCLIController {
         gradeBeingRegistered = null;
         phoneNumberBeingRegistered = null;
         emergencyContactBeingRegistered = null;
+    }
+
+    private void printLearnerDetails(Learner learner) {
+        String msg = new StringBuilder()
+                .append("\n+-------------------------------------------------+\n")
+                .append("|                Learner Details                  |\n")
+                .append("+-------------------------------------------------+\n")
+                .append(String.format("| ID: %-43s |\n", learner.getId()))
+                .append(String.format("| Name: %-41s |\n", learner.getName()))
+                .append(String.format("| Age: %-42s |\n", learner.getAge()))
+                .append(String.format("| Gender: %-39s |\n", learner.getGender()))
+                .append(String.format("| Current Grade: %-32s |\n", learner.getGrade()))
+                .append(String.format("| Total Registered Lessons: %-21s |\n", learner.getRegisteredLessons().size()))
+                .append("+-------------------------------------------------+")
+                .toString();
+        view.displayMessage(msg, MessageType.INFO);
     }
 
 }

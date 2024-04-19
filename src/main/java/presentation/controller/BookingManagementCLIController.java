@@ -2,6 +2,7 @@ package presentation.controller;
 
 import data.InMemLearnersRepository;
 import data.InMemLessonRepository;
+import domain.entity.Rating;
 import domain.entity.Review;
 import domain.entity.coach.Coach;
 import domain.entity.learner.Learner;
@@ -11,6 +12,8 @@ import domain.entity.lesson.RegisteredLesson;
 import domain.repository.CoachRepository;
 import domain.repository.LearnerRepository;
 import domain.usecase.*;
+import domain.util.IdGenerator;
+import domain.util.LessonUtil;
 import domain.util.Result;
 import presentation.view.BookingManagementCLIView;
 import presentation.view.InputConsumer;
@@ -79,11 +82,16 @@ public class BookingManagementCLIController {
         Lesson lesson3 = new Lesson("Diving 3", 4, coach2, LocalDate.now());
         Lesson lesson4 = new Lesson("Diving 4", 2, coach1, LocalDate.now());
 
+        lesson.setId(IdGenerator.generateId(lesson));
+        lesson2.setId(IdGenerator.generateId(lesson2));
+        lesson3.setId(IdGenerator.generateId(lesson3));
+        lesson4.setId(IdGenerator.generateId(lesson4));
         Learner learner = new Learner("Paul", "Male", 6, 3, "0819ja", "0819ja",
                 List.of(new RegisteredLesson(lesson, LessonStatus.BOOKED), new RegisteredLesson(lesson2, LessonStatus.ATTENDED))).setId(1234);
 
         Learner learner1 = new Learner("Simon", "Male", 6, 2, "0819ja", "0819ja",
                 List.of(new RegisteredLesson(lesson, LessonStatus.BOOKED), new RegisteredLesson(lesson3, LessonStatus.ATTENDED))).setId(123);
+
 
         InMemLearnersRepository.getInstance().addNewLearner(learner1);
         InMemLearnersRepository.getInstance().addNewLearner(learner);
@@ -93,7 +101,7 @@ public class BookingManagementCLIController {
         lesson.addLearner(learner);
         lesson2.addLearner(learner);
 
-        InMemLessonRepository.getInstance().addLessons(List.of(lesson2, lesson2, lesson3, lesson4, lesson));
+        InMemLessonRepository.getInstance().addLessons(List.of(lesson2, lesson3, lesson4, lesson));
 
         showMainMenuOptions();
     }
@@ -137,9 +145,11 @@ public class BookingManagementCLIController {
                     printBookingDetails(learner, lesson);
                     showExitOrMainMenuOption();
                 } else {
-                    String errorMsg = switch (result.getError()){
-                        case LESSON_ABOVE_LEARNER_GRADE -> "This grade (" + lesson.getGrade()+ ") lesson is above your current grade of " + learner.getGrade();
-                        case LESSON_BELOW_LEARNER_GRADE -> "This grade (" + lesson.getGrade()+ ") lesson is below your current grade of " + learner.getGrade();
+                    String errorMsg = switch (result.getError()) {
+                        case LESSON_ABOVE_LEARNER_GRADE ->
+                                "This grade (" + lesson.getGrade() + ") lesson is above your current grade of " + learner.getGrade();
+                        case LESSON_BELOW_LEARNER_GRADE ->
+                                "This grade (" + lesson.getGrade() + ") lesson is below your current grade of " + learner.getGrade();
                         case DUPLICATE_BOOKING -> "You have already booked this lesson";
                         case LESSON_FULLY_BOOKED -> "This lesson is fully booked";
                     };
@@ -249,7 +259,7 @@ public class BookingManagementCLIController {
         resetRegistrationDetails();
 
         if (result.isSuccess()) {
-            view.displayMessage(prettyPrintSuccessfulLearnerRegistrationDetails(learner), MessageType.INFO);
+            printSuccessfulLearnerRegistrationDetails(learner);
         } else {
             String errorMessage = switch (result.getError()) {
                 case INVALID_AGE -> "Please enter a valid age between 4 and 11";
@@ -272,27 +282,27 @@ public class BookingManagementCLIController {
                     .map(RegisteredLesson::getLesson)
                     .toList();
 
-            if (bookedLessons.isEmpty()){
+            if (bookedLessons.isEmpty()) {
                 view.displayMessage("You don't have any booked lesson to attend", MessageType.ERROR);
                 var options = List.of("Book a lesson", "Return to Main menu", "Exit App");
                 view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, "Choose an option", (index, value) -> {
-                    switch (index){
+                    switch (index) {
                         case 0 -> onBookSwimmingLesson();
                         case 1 -> showMainMenuOptions();
                         case 2 -> closeApp();
                     }
                 });
             } else {
-                requestPickFromLessons("Please select from one of your booked lesson to attend", bookedLessons, lesson -> {
+                requestPickFromLessons("Please select from one of your booked lesson to attend", bookedLessons, false, lesson -> {
                     var result = attendLessonUseCase.attendLesson(lesson, learner, this::provideLessonReview);
 
                     if (result.isSuccess()) {
-                        view.displayMessage("Lesson attended!", MessageType.INFO);
-                        view.displayMessage(getLearnerDetails(learner, true), MessageType.INFO);
+                        printSuccessfulLessonAttendedMsg(lesson, learner);
                         showExitOrMainMenuOption();
                     } else {
-                        String errorMsg = switch (result.getError()){
-                            case LEARNER_NOT_REGISTERED_TO_LESSON -> "You cannot attend this lesson as you are not registered for it";
+                        String errorMsg = switch (result.getError()) {
+                            case LEARNER_NOT_REGISTERED_TO_LESSON ->
+                                    "You cannot attend this lesson as you are not registered for it";
                             case LESSON_ALREADY_ATTENDED -> "You have already attended this lesson";
                             case INVALID_REVIEW_RATING -> "Review rating invalid. it should be between 1 to 5";
                             case EMPTY_REVIEW_MESSAGE -> "You provided an empty review message";
@@ -328,8 +338,8 @@ public class BookingManagementCLIController {
         });
     }
 
-    private void requestPickFromLessons(String message, List<Lesson> lessons, Consumer<Lesson> lessonConsumer){
-        List<String> options = lessons.stream().map(this::getLessonDetails).toList();
+    private void requestPickFromLessons(String message, List<Lesson> lessons, boolean showLessonCapacity, Consumer<Lesson> lessonConsumer) {
+        List<String> options = lessons.stream().map(lesson -> getLessonDetails(lesson, showLessonCapacity)).toList();
         view.showOptionsPicker(
                 options,
                 OptionPickerStyle.VERTICAL, message,
@@ -345,7 +355,7 @@ public class BookingManagementCLIController {
                 return;
             }
 
-            requestPickFromLessons(null, lessons, lessonConsumer);
+            requestPickFromLessons(null, lessons, true, lessonConsumer);
         });
     }
 
@@ -398,7 +408,7 @@ public class BookingManagementCLIController {
         view.requestUserInput("Please the name of the coach. 0 to show all coaches", data -> {
             if (data.trim().equals("0")) {
                 getCoachFromAllCoaches(null, coach -> {
-                    var result = filterLessonsUseCase.filterByCoach(data);
+                    var result = filterLessonsUseCase.filterByCoach(coach.getName());
                     if (result.isSuccess()) {
                         caller.accept(result.getData());
                     } else {
@@ -426,25 +436,89 @@ public class BookingManagementCLIController {
     }
 
     private String getCoachDetails(Coach coach) {
-        // TODO: 4/18/2024 add good details
-        return coach.toString();
+        Rating averageRating = LessonUtil.getAverageRating(coach.getAssignedLessons().
+                stream().map(lesson -> LessonUtil.getAverageReviewRating(lesson.getReviews()))
+                .toList());
+
+        return coach.getName() + " (Average Rating: " + (averageRating.hasRating() ? averageRating.getRatingValue() : "No rating yet") + ")";
     }
 
-    private String getLessonDetails(Lesson lesson) {
-        // TODO: 4/18/2024 add good details
-        return lesson.getName();
+    private String getLessonDetails(Lesson lesson, boolean showLessonCapacity) {
+        Rating averageRating = LessonUtil.getAverageReviewRating(lesson.getReviews());
+        StringBuilder sb = new StringBuilder();
+        sb.append(lesson.getName());
+        sb.append(" (Grade: ").append(lesson.getGrade());
+        sb.append(", Date: ").append(formatLessonDate(lesson));
+        sb.append(", Time: " + "4-5pm"); // TODO: 4/19/2024  get lesson time)
+        sb.append(", Average Rating: ").append(averageRating.hasRating() ? averageRating.getRatingValue() : "No rating yet").append(")");
+        if (showLessonCapacity) {
+            int activeLessons = lesson.getRegisteredLearners().stream().filter(learner -> learner.getLessonStatus(lesson) != LessonStatus.CANCELLED).toList().size();
+            boolean fullyBooked = activeLessons >= 4;
+            sb.append(" - ").append(fullyBooked ? "Fully booked" : (4 - activeLessons) + " slots available");
+        }
+        return sb.toString();
     }
 
-    private String getLearnerDetails(Learner learner, boolean prettyPrint) {
-        // TODO: 4/18/2024 add good details
-        return learner.toString();
+    private void printBookingDetails(Learner learner, Lesson lesson) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n+-------------------------------------------------+\n");
+        sb.append("|                 Lesson Booked!                  |\n");
+        sb.append("+-------------------------------------------------+\n");
+        sb.append(String.format("| Lesson ID: %-36d |\n", lesson.getId()));
+        sb.append(String.format("| Lesson Name: %-34s |\n", lesson.getName()));
+        sb.append(String.format("| Lesson Date: %-34s |\n", formatLessonDate(lesson)));
+        sb.append(String.format("| Lesson Grade: %-33s |\n", lesson.getGrade()));
+        sb.append(String.format("| Your current Grade: %-27d |\n", learner.getGrade()));
+        if (lesson.getGrade() > learner.getGrade()) {
+            sb.append(String.format("| Additional Info: You'd be upgraded to grade %-3d |\n", lesson.getGrade()));
+            sb.append("|                  after attending this lesson    |\n");
+        }
+        sb.append("+-------------------------------------------------+\n");
+        sb.append("|                 Booking details                 |\n");
+        sb.append("+-------------------------------------------------+\n");
+
+        view.displayMessage(sb.toString(), MessageType.INFO);
     }
 
-    private void printBookingDetails(Learner learner, Lesson lesson){
-        // TODO: 4/19/2024
-        view.displayMessage("Lesson Booked!", MessageType.INFO);
+    private String formatLessonDate(Lesson lesson) {
+        String day = lesson.getLessonDate().getDayOfWeek().name();
+        day = day.substring(0, 1).toUpperCase() + day.substring(1).toLowerCase(); //capitalize
+        return day;
+    }
 
-        view.displayMessage(getLearnerDetails(learner, true), MessageType.INFO);
+    private void printSuccessfulLearnerRegistrationDetails(Learner learner) {
+
+        var message = new StringBuilder()
+                .append("\n+-------------------------------------------------+\n")
+                .append("|       Registration Successful! Welcome!         |\n")
+                .append("+-------------------------------------------------+\n")
+                .append(String.format("| ID: %-43d |\n", learner.getId()))
+                .append(String.format("| Name: %-41s |\n", learner.getName()))
+                .append(String.format("| Gender: %-39s |\n", learner.getGender()))
+                .append(String.format("| Age: %-42d |\n", learner.getAge()))
+                .append(String.format("| Grade: %-40d |\n", learner.getGrade()))
+                .append(String.format("| Phone Number: %-33s |\n", learner.getPhoneNumber()))
+                .append(String.format("| Emergency Contact: %-28s |\n", learner.getEmergencyContactNumber()))
+                .append("+-------------------------------------------------+\n")
+                .append("| Here are your registration details. Please keep |\n")
+                .append("| this information for your records.              |\n")
+                .append("+-------------------------------------------------+\n")
+                .toString();
+
+        view.displayMessage(message, MessageType.INFO);
+    }
+
+    private void printSuccessfulLessonAttendedMsg(Lesson lesson, Learner learner) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n+-------------------------------------------------+\n");
+        sb.append("|                Lesson Attended!                 |\n");
+        sb.append("+-------------------------------------------------+\n");
+        sb.append(String.format("| Lesson ID: %-36d |\n", lesson.getId()));
+        sb.append(String.format("| Lesson Name: %-34s |\n", lesson.getName()));
+        sb.append(String.format("| Your current Grade: %-27d |\n", learner.getGrade()));
+        sb.append("+-------------------------------------------------+\n");
+
+        view.displayMessage(sb.toString(), MessageType.INFO);
     }
 
     private Review provideLessonReview() {
@@ -467,7 +541,7 @@ public class BookingManagementCLIController {
             return InputConsumer.success;
         });
 
-        while (!hasCompletedReview[0]){
+        while (!hasCompletedReview[0]) {
             // delay until we have received the review
         }
 
@@ -521,11 +595,6 @@ public class BookingManagementCLIController {
         gradeBeingRegistered = null;
         phoneNumberBeingRegistered = null;
         emergencyContactBeingRegistered = null;
-    }
-
-    private String prettyPrintSuccessfulLearnerRegistrationDetails(Learner learner) {
-        return "You have been successfully Registered. Your learner ID is: " + learner.getId();
-        // TODO: 4/18/2024 Implement
     }
 
 }

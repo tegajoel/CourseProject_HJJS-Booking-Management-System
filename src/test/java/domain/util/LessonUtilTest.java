@@ -22,10 +22,10 @@ class LessonUtilTest {
         Coach coach1 = new Coach("Helen Paul");
         Coach coach2 = new Coach("Sam Johnson");
         Coach coach3 = new Coach("John Smith");
-        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving2", 3, coach2, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving4", 1, coach2, LocalDate.now());
+        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now(), "4-5pm");
+        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now(), "4-5pm");
+        Lesson lesson2 = new Lesson("Diving2", 3, coach2, LocalDate.now(), "4-5pm");
+        Lesson lesson4 = new Lesson("Diving4", 1, coach2, LocalDate.now(), "4-5pm");
 
         List<Lesson> lessons = Arrays.asList(lesson1, lesson2, lesson3, lesson4);
 
@@ -40,10 +40,10 @@ class LessonUtilTest {
     void getCoachesFromLessons_returnsSetWithExpectedSize() {
         Coach coach1 = new Coach("Helen Paul");
         Coach coach2 = new Coach("Sam Johnson");
-        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving2", 3, coach2, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving4", 1, coach2, LocalDate.now());
+        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now(), "4-5pm");
+        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now(), "4-5pm");
+        Lesson lesson2 = new Lesson("Diving2", 3, coach2, LocalDate.now(), "4-5pm");
+        Lesson lesson4 = new Lesson("Diving4", 1, coach2, LocalDate.now(), "4-5pm");
 
         List<Lesson> lessons = Arrays.asList(lesson1, lesson2, lesson3, lesson4);
 

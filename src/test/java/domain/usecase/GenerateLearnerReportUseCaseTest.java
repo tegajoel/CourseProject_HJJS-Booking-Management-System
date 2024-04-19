@@ -19,6 +19,7 @@ class GenerateLearnerReportUseCaseTest {
     private GenerateLearnerReportUseCase useCase;
     private LearnerRepository learnerRepository;
     private Learner learner;
+    private final String lessonTime = "4-5pm";
     @BeforeEach
     void setUp() {
         learnerRepository = new LearnerRepositoryMock();
@@ -53,10 +54,10 @@ class GenerateLearnerReportUseCaseTest {
     @Test
     void getReportForLearner_reportAndLearnerRegisteredLessonSame() {
         Coach coach = new Coach("John Smith");
-        Lesson lesson1 = new Lesson("Diving1", 3, coach, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving3", 2, coach, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving2", 3, coach, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving4", 1, coach, LocalDate.now());
+        Lesson lesson1 = new Lesson("Diving1", 3, coach, LocalDate.now(), lessonTime);
+        Lesson lesson3 = new Lesson("Diving3", 2, coach, LocalDate.now(), lessonTime);
+        Lesson lesson2 = new Lesson("Diving2", 3, coach, LocalDate.now(), lessonTime);
+        Lesson lesson4 = new Lesson("Diving4", 1, coach, LocalDate.now(), lessonTime);
 
         learner.registerNewLesson(new RegisteredLesson(lesson1, LessonStatus.BOOKED));
         learner.registerNewLesson(new RegisteredLesson(lesson2, LessonStatus.BOOKED));
@@ -69,10 +70,10 @@ class GenerateLearnerReportUseCaseTest {
     @Test
     void getReportForLearner_reportAndLearnerBookedLessonSame() {
         Coach coach = new Coach("John Smith");
-        Lesson lesson1 = new Lesson("Diving1", 3, coach, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving3", 2, coach, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving2", 3, coach, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving4", 1, coach, LocalDate.now());
+        Lesson lesson1 = new Lesson("Diving1", 3, coach, LocalDate.now(), lessonTime);
+        Lesson lesson3 = new Lesson("Diving3", 2, coach, LocalDate.now(), lessonTime);
+        Lesson lesson2 = new Lesson("Diving2", 3, coach, LocalDate.now(), lessonTime);
+        Lesson lesson4 = new Lesson("Diving4", 1, coach, LocalDate.now(), lessonTime);
 
         learner.registerNewLesson(new RegisteredLesson(lesson1, LessonStatus.BOOKED));
         learner.registerNewLesson(new RegisteredLesson(lesson2, LessonStatus.BOOKED));
@@ -85,10 +86,10 @@ class GenerateLearnerReportUseCaseTest {
     @Test
     void getReportForLearner_reportAndLearnerAttendedLessonSame() {
         Coach coach = new Coach("John Smith");
-        Lesson lesson1 = new Lesson("Diving1", 3, coach, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving2", 3, coach, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving3", 2, coach, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving4", 1, coach, LocalDate.now());
+        Lesson lesson1 = new Lesson("Diving1", 3, coach, LocalDate.now(), lessonTime);
+        Lesson lesson2 = new Lesson("Diving2", 3, coach, LocalDate.now(), lessonTime);
+        Lesson lesson3 = new Lesson("Diving3", 2, coach, LocalDate.now(), lessonTime);
+        Lesson lesson4 = new Lesson("Diving4", 1, coach, LocalDate.now(), lessonTime);
 
         learner.registerNewLesson(new RegisteredLesson(lesson1, LessonStatus.BOOKED));
         learner.registerNewLesson(new RegisteredLesson(lesson2, LessonStatus.BOOKED));
@@ -101,10 +102,10 @@ class GenerateLearnerReportUseCaseTest {
     @Test
     void getReportForLearner_reportAndLearnerCancelledLessonSame() {
         Coach coach = new Coach("John Smith");
-        Lesson lesson1 = new Lesson("Diving1", 3, coach, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving3", 2, coach, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving2", 3, coach, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving4", 1, coach, LocalDate.now());
+        Lesson lesson1 = new Lesson("Diving1", 3, coach, LocalDate.now(), lessonTime);
+        Lesson lesson3 = new Lesson("Diving3", 2, coach, LocalDate.now(), lessonTime);
+        Lesson lesson2 = new Lesson("Diving2", 3, coach, LocalDate.now(), lessonTime);
+        Lesson lesson4 = new Lesson("Diving4", 1, coach, LocalDate.now(), lessonTime);
 
         learner.registerNewLesson(new RegisteredLesson(lesson1, LessonStatus.BOOKED));
         learner.registerNewLesson(new RegisteredLesson(lesson2, LessonStatus.BOOKED));
@@ -122,10 +123,10 @@ class GenerateLearnerReportUseCaseTest {
     @Test
     void getReportForAllLearners_returnsReportListWithCorrectSize(){
         Coach coach = new Coach("John Smith");
-        Lesson lesson1 = new Lesson("Diving1", 3, coach, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving3", 2, coach, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving2", 3, coach, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving4", 1, coach, LocalDate.now());
+        Lesson lesson1 = new Lesson("Diving1", 3, coach, LocalDate.now(), lessonTime);
+        Lesson lesson3 = new Lesson("Diving3", 2, coach, LocalDate.now(), lessonTime);
+        Lesson lesson2 = new Lesson("Diving2", 3, coach, LocalDate.now(), lessonTime);
+        Lesson lesson4 = new Lesson("Diving4", 1, coach, LocalDate.now(), lessonTime);
 
 
         Learner learner1 = new Learner("John Paul", "Female", 5, 5, "", "");

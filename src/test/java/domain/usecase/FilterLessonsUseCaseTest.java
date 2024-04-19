@@ -15,6 +15,7 @@ class FilterLessonsUseCaseTest {
     private FilterLessonsUseCase useCase;
     private LessonRepository lessonRepository;
     private Coach testCoach;
+    private final String lessonTime = "4-5pm";
 
     @BeforeEach
     void setUp() {
@@ -42,10 +43,10 @@ class FilterLessonsUseCaseTest {
 
     @Test
     public void filterByGrade_succeeds_returnsListWithCorrectSize() {
-        Lesson lesson1 = new Lesson("Diving1", 3, testCoach, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving3", 2, testCoach, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving2", 3, testCoach, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving4", 1, testCoach, LocalDate.now());
+        Lesson lesson1 = new Lesson("Diving1", 3, testCoach, LocalDate.now(), lessonTime);
+        Lesson lesson3 = new Lesson("Diving3", 2, testCoach, LocalDate.now(), lessonTime);
+        Lesson lesson2 = new Lesson("Diving2", 3, testCoach, LocalDate.now(), lessonTime);
+        Lesson lesson4 = new Lesson("Diving4", 1, testCoach, LocalDate.now(), lessonTime);
 
         lessonRepository.addNewLesson(lesson1);
         lessonRepository.addNewLesson(lesson2);
@@ -60,10 +61,10 @@ class FilterLessonsUseCaseTest {
 
     @Test
     public void filterByGrade_succeeds_returnsListWithSameGrade() {
-        Lesson lesson1 = new Lesson("Diving1", 3, testCoach, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving3", 2, testCoach, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving2", 3, testCoach, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving4", 1, testCoach, LocalDate.now());
+        Lesson lesson1 = new Lesson("Diving1", 3, testCoach, LocalDate.now(), lessonTime);
+        Lesson lesson3 = new Lesson("Diving3", 2, testCoach, LocalDate.now(), lessonTime);
+        Lesson lesson2 = new Lesson("Diving2", 3, testCoach, LocalDate.now(), lessonTime);
+        Lesson lesson4 = new Lesson("Diving4", 1, testCoach, LocalDate.now(), lessonTime);
 
         lessonRepository.addNewLesson(lesson1);
         lessonRepository.addNewLesson(lesson2);
@@ -87,10 +88,10 @@ class FilterLessonsUseCaseTest {
 
     @Test
     public void filterByGrade_succeedsWithNoMatch_emptyListReturned() {
-        Lesson lesson1 = new Lesson("Diving1", 3, testCoach, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving3", 2, testCoach, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving2", 3, testCoach, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving4", 1, testCoach, LocalDate.now());
+        Lesson lesson1 = new Lesson("Diving1", 3, testCoach, LocalDate.now(), lessonTime);
+        Lesson lesson3 = new Lesson("Diving3", 2, testCoach, LocalDate.now(), lessonTime);
+        Lesson lesson2 = new Lesson("Diving2", 3, testCoach, LocalDate.now(), lessonTime);
+        Lesson lesson4 = new Lesson("Diving4", 1, testCoach, LocalDate.now(), lessonTime);
 
         lessonRepository.addNewLesson(lesson1);
         lessonRepository.addNewLesson(lesson2);
@@ -176,11 +177,11 @@ class FilterLessonsUseCaseTest {
     public void filterByCoach_succeeds_returnsListWithCorrectSize() {
         Coach coach1 = new Coach("Helen Paul");
         Coach coach2 = new Coach("Sam Johnson");
-        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving2", 3, coach1, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving4", 1, coach1, LocalDate.now());
-        Lesson lesson5 = new Lesson("Diving4", 1, coach2, LocalDate.now());
+        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now(), lessonTime);
+        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now(), lessonTime);
+        Lesson lesson2 = new Lesson("Diving2", 3, coach1, LocalDate.now(), lessonTime);
+        Lesson lesson4 = new Lesson("Diving4", 1, coach1, LocalDate.now(), lessonTime);
+        Lesson lesson5 = new Lesson("Diving4", 1, coach2, LocalDate.now(), lessonTime);
 
         lessonRepository.addNewLesson(lesson1);
         lessonRepository.addNewLesson(lesson2);
@@ -197,10 +198,10 @@ class FilterLessonsUseCaseTest {
     public void filterByCoach_succeeds_returnsListWithSameCoach() {
         Coach coach1 = new Coach("Helen Paul");
         Coach coach2 = new Coach("Sam Johnson");
-        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving2", 3, coach1, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving4", 1, coach1, LocalDate.now());
+        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now(), lessonTime);
+        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now(), lessonTime);
+        Lesson lesson2 = new Lesson("Diving2", 3, coach1, LocalDate.now(), lessonTime);
+        Lesson lesson4 = new Lesson("Diving4", 1, coach1, LocalDate.now(), lessonTime);
 
         lessonRepository.addNewLesson(lesson1);
         lessonRepository.addNewLesson(lesson2);
@@ -226,10 +227,10 @@ class FilterLessonsUseCaseTest {
     public void filterByCoach_succeedsWithNoMatch_emptyListReturned() {
         Coach coach1 = new Coach("Helen Paul");
         Coach coach2 = new Coach("Sam Johnson");
-        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving2", 3, coach1, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving4", 1, coach1, LocalDate.now());
+        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now(), lessonTime);
+        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now(), lessonTime);
+        Lesson lesson2 = new Lesson("Diving2", 3, coach1, LocalDate.now(), lessonTime);
+        Lesson lesson4 = new Lesson("Diving4", 1, coach1, LocalDate.now(), lessonTime);
 
         lessonRepository.addNewLesson(lesson1);
         lessonRepository.addNewLesson(lesson2);
@@ -245,11 +246,11 @@ class FilterLessonsUseCaseTest {
     public void filterByCoach_validCoachWithNameCaseSwapped_returnsListWithCorrectSize() {
         Coach coach1 = new Coach("Helen Paul");
         Coach coach2 = new Coach("Sam Johnson");
-        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving2", 3, coach1, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving4", 1, coach1, LocalDate.now());
-        Lesson lesson5 = new Lesson("Diving4", 1, coach2, LocalDate.now());
+        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now(), lessonTime);
+        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now(), lessonTime);
+        Lesson lesson2 = new Lesson("Diving2", 3, coach1, LocalDate.now(), lessonTime);
+        Lesson lesson4 = new Lesson("Diving4", 1, coach1, LocalDate.now(), lessonTime);
+        Lesson lesson5 = new Lesson("Diving4", 1, coach2, LocalDate.now(), lessonTime);
 
         lessonRepository.addNewLesson(lesson1);
         lessonRepository.addNewLesson(lesson2);
@@ -266,11 +267,11 @@ class FilterLessonsUseCaseTest {
     public void filterByCoach_validCoachWithWhiteSpace_returnsListWithCorrectSize() {
         Coach coach1 = new Coach("Helen Paul");
         Coach coach2 = new Coach("Sam Johnson");
-        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving2", 3, coach1, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving4", 1, coach1, LocalDate.now());
-        Lesson lesson5 = new Lesson("Diving4", 1, coach2, LocalDate.now());
+        Lesson lesson1 = new Lesson("Diving1", 3, coach1, LocalDate.now(), lessonTime);
+        Lesson lesson3 = new Lesson("Diving3", 2, coach2, LocalDate.now(), lessonTime);
+        Lesson lesson2 = new Lesson("Diving2", 3, coach1, LocalDate.now(), lessonTime);
+        Lesson lesson4 = new Lesson("Diving4", 1, coach1, LocalDate.now(), lessonTime);
+        Lesson lesson5 = new Lesson("Diving4", 1, coach2, LocalDate.now(), lessonTime);
 
         lessonRepository.addNewLesson(lesson1);
         lessonRepository.addNewLesson(lesson2);

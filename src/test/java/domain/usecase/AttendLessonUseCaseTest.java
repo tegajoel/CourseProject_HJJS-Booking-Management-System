@@ -25,7 +25,7 @@ class AttendLessonUseCaseTest {
         reviewProvider = new ReviewProviderImpl();
         reviewProvider.setReview(new Review("Great lesson", 5));
         Coach coach1 = new Coach("Helen Paul");
-        testLesson = new Lesson("Diving1", 3, coach1, LocalDate.now());
+        testLesson = new Lesson("Diving1", 3, coach1, LocalDate.now(), "4-5pm");
         String validPhoneNumber = "08012345680";
         testLearner = new Learner("John doe", "Male", 5, 2, validPhoneNumber, validPhoneNumber);
     }

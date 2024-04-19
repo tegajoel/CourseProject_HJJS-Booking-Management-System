@@ -77,10 +77,10 @@ public class BookingManagementCLIController {
         coachRepository.addNewCoach(coach1);
         coachRepository.addNewCoach(coach2);
 
-        Lesson lesson = new Lesson("Diving 1", 3, coach1, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving 2", 3, coach1, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving 3", 4, coach2, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving 4", 2, coach1, LocalDate.now());
+        Lesson lesson = new Lesson("Diving 1", 3, coach1, LocalDate.now(), "3-4pm");
+        Lesson lesson2 = new Lesson("Diving 2", 3, coach1, LocalDate.now(), "4-5pm");
+        Lesson lesson3 = new Lesson("Diving 3", 4, coach2, LocalDate.now(), "6-7pm");
+        Lesson lesson4 = new Lesson("Diving 4", 2, coach1, LocalDate.now(), "3-4pm");
 
         lesson.setId(IdGenerator.generateId(lesson));
         lesson2.setId(IdGenerator.generateId(lesson2));

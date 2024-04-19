@@ -33,10 +33,10 @@ public class GenerateCoachReportUseCaseTest {
 
     @Test
     void getReportForCoach_reportContainsAccurateNumberLessonsTaught() {
-        Lesson lesson1 = new Lesson("Diving1", 3, testCoach, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving3", 2, testCoach, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving2", 3, testCoach, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving4", 1, testCoach, LocalDate.now());
+        Lesson lesson1 = new Lesson("Diving1", 3, testCoach, LocalDate.now(), lessonTime);
+        Lesson lesson3 = new Lesson("Diving3", 2, testCoach, LocalDate.now(), lessonTime);
+        Lesson lesson2 = new Lesson("Diving2", 3, testCoach, LocalDate.now(), lessonTime);
+        Lesson lesson4 = new Lesson("Diving4", 1, testCoach, LocalDate.now(), lessonTime);
 
         assertEquals(4, useCase.getReportForCoach(testCoach).numberOfLessonsTaught());
         assertEquals(4, useCase.getReportForCoach(testCoach).lessonsTaught().size());
@@ -44,10 +44,10 @@ public class GenerateCoachReportUseCaseTest {
 
     @Test
     void getReportForCoach_reportContainsAccurateLessonsTaught() {
-        Lesson lesson1 = new Lesson("Diving1", 3, testCoach, LocalDate.now());
-        Lesson lesson3 = new Lesson("Diving3", 2, testCoach, LocalDate.now());
-        Lesson lesson2 = new Lesson("Diving2", 3, testCoach, LocalDate.now());
-        Lesson lesson4 = new Lesson("Diving4", 1, testCoach, LocalDate.now());
+        Lesson lesson1 = new Lesson("Diving1", 3, testCoach, LocalDate.now(), lessonTime);
+        Lesson lesson3 = new Lesson("Diving3", 2, testCoach, LocalDate.now(), lessonTime);
+        Lesson lesson2 = new Lesson("Diving2", 3, testCoach, LocalDate.now(), lessonTime);
+        Lesson lesson4 = new Lesson("Diving4", 1, testCoach, LocalDate.now(), lessonTime);
 
         var isCoachForAllLessons = true;
         var result = useCase.getReportForCoach(testCoach).lessonsTaught();

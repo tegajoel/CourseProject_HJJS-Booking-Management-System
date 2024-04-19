@@ -23,7 +23,7 @@ class BookLessonUseCaseTest {
         useCase = new BookLessonUseCase();
         learner = new Learner("John doe", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
         Coach coach = new Coach("Peter");
-        testLesson = new Lesson("Diving", passingTestGrade, coach, LocalDate.now());
+        testLesson = new Lesson("Diving", passingTestGrade, coach, LocalDate.now(), lessonTime);
     }
 
     @Test

@@ -82,7 +82,7 @@ public class BookingManagementCLIController {
         Learner learner = new Learner("Paul", "Male", 6, 3, "0819ja", "0819ja",
                 List.of(new RegisteredLesson(lesson, LessonStatus.BOOKED), new RegisteredLesson(lesson2, LessonStatus.ATTENDED))).setId(1234);
 
-        Learner learner1 = new Learner("Simon", "Male", 6, 3, "0819ja", "0819ja",
+        Learner learner1 = new Learner("Simon", "Male", 6, 2, "0819ja", "0819ja",
                 List.of(new RegisteredLesson(lesson, LessonStatus.BOOKED), new RegisteredLesson(lesson3, LessonStatus.ATTENDED))).setId(123);
 
         InMemLearnersRepository.getInstance().addNewLearner(learner1);
@@ -109,7 +109,7 @@ public class BookingManagementCLIController {
                 "Display all Learners"
         );
 
-        view.showOptionsPicker(menuOptions, OptionPickerStyle.VERTICAL, "Main menu", (index, value) -> {
+        view.showOptionsPicker(menuOptions, OptionPickerStyle.VERTICAL_WITH_EXIT_APP_OPTION, "Main menu", (index, value) -> {
             switch (index) {
                 case 0 -> {
                     view.displayMessage("We'll need some details to get you registered", MessageType.INFO);
@@ -130,7 +130,7 @@ public class BookingManagementCLIController {
 
     private void onBookSwimmingLesson() {
         requestLearnerById(learner -> {
-            requestLessonFromLessons(lesson -> {
+            requestLessonFromAllLessons(lesson -> {
                 var result = bookLessonUseCase.bookLesson(lesson, learner);
 
                 if (result.isSuccess()) {
@@ -153,7 +153,7 @@ public class BookingManagementCLIController {
     }
 
     private void showExitOrMainMenuOption() {
-        var options = List.of("Return to main menu", "Exit App");
+        var options = List.of("Return to Main menu", "Exit App");
         view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, null, (index, value) -> {
             if (index == 0) {
                 showMainMenuOptions();
@@ -274,7 +274,7 @@ public class BookingManagementCLIController {
 
             if (bookedLessons.isEmpty()){
                 view.displayMessage("You don't have any booked lesson to attend", MessageType.ERROR);
-                var options = List.of("Book a lesson", "Return to Main Menu", "Exit App");
+                var options = List.of("Book a lesson", "Return to Main menu", "Exit App");
                 view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, "Choose an option", (index, value) -> {
                     switch (index){
                         case 0 -> onBookSwimmingLesson();
@@ -319,7 +319,7 @@ public class BookingManagementCLIController {
                     consumer.accept(result.getData());
                     return InputConsumer.success;
                 } else {
-                    view.displayMessage("\nEnter 0 to to return to the Main Menu", MessageType.INFO);
+                    view.displayMessage("\nEnter 0 to to return to the Main menu", MessageType.INFO);
                     return Result.error("No learner exits with this id.");
                 }
             } catch (Exception e) {
@@ -330,23 +330,22 @@ public class BookingManagementCLIController {
 
     private void requestPickFromLessons(String message, List<Lesson> lessons, Consumer<Lesson> lessonConsumer){
         List<String> options = lessons.stream().map(this::getLessonDetails).toList();
-        view.showOptionsPicker(options, OptionPickerStyle.VERTICAL, message, (index, value) -> {
-            lessonConsumer.accept(lessons.get(index));
-        });
+        view.showOptionsPicker(
+                options,
+                OptionPickerStyle.VERTICAL, message,
+                (index, value) -> lessonConsumer.accept(lessons.get(index))
+        );
     }
 
-    private void requestLessonFromLessons(Consumer<Lesson> lessonConsumer) {
+    private void requestLessonFromAllLessons(Consumer<Lesson> lessonConsumer) {
         showOptionToPickLesson(lessons -> {
             if (lessons.isEmpty()) {
-                view.displayMessage("There are no lesson to choose from", MessageType.INFO);
+                view.displayMessage("There are no lessons to choose from", MessageType.INFO);
                 showExitOrMainMenuOption();
                 return;
             }
 
-            List<String> options = lessons.stream().map(this::getLessonDetails).toList();
-            view.showOptionsPicker(options, OptionPickerStyle.VERTICAL, null, (index, value) -> {
-                lessonConsumer.accept(lessons.get(index));
-            });
+            requestPickFromLessons(null, lessons, lessonConsumer);
         });
     }
 
@@ -398,7 +397,7 @@ public class BookingManagementCLIController {
     private void onFilterLessonByCoach(Consumer<List<Lesson>> caller) {
         view.requestUserInput("Please the name of the coach. 0 to show all coaches", data -> {
             if (data.trim().equals("0")) {
-                getCoachFromAllCoaches(coach -> {
+                getCoachFromAllCoaches(null, coach -> {
                     var result = filterLessonsUseCase.filterByCoach(data);
                     if (result.isSuccess()) {
                         caller.accept(result.getData());
@@ -420,10 +419,10 @@ public class BookingManagementCLIController {
         });
     }
 
-    private void getCoachFromAllCoaches(Consumer<Coach> consumer) {
+    private void getCoachFromAllCoaches(String headerMessage, Consumer<Coach> consumer) {
         List<Coach> coaches = coachRepository.getAllCoaches();
         List<String> options = coaches.stream().map(this::getCoachDetails).toList();
-        view.showOptionsPicker(options, OptionPickerStyle.VERTICAL, null, (index, value) -> consumer.accept(coaches.get(index)));
+        view.showOptionsPicker(options, OptionPickerStyle.VERTICAL, headerMessage, (index, value) -> consumer.accept(coaches.get(index)));
     }
 
     private String getCoachDetails(Coach coach) {
@@ -433,7 +432,7 @@ public class BookingManagementCLIController {
 
     private String getLessonDetails(Lesson lesson) {
         // TODO: 4/18/2024 add good details
-        return lesson.toString();
+        return lesson.getName();
     }
 
     private String getLearnerDetails(Learner learner, boolean prettyPrint) {
@@ -482,11 +481,24 @@ public class BookingManagementCLIController {
     }
 
     private void onPrintCoachReport() {
-
+        var options = List.of("Print for all coaches", "Print for a specific coach");
+        view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, null, (index, value) -> {
+            if (index == 0) {
+                String msg = ReportPrinter.prettyPrintCoachReports(generateCoachReportUseCase.getReportForAllCoaches());
+                view.displayMessage(msg, MessageType.INFO);
+                showExitOrMainMenuOption();
+            } else {
+                getCoachFromAllCoaches("Please select a coach", coach -> {
+                    String msg = ReportPrinter.prettyPrintCoachReport(generateCoachReportUseCase.getReportForCoach(coach));
+                    view.displayMessage(msg, MessageType.INFO);
+                    showExitOrMainMenuOption();
+                });
+            }
+        });
     }
 
     private void onPrintLearnerReport() {
-        var options = List.of("Print for all learners", "Print for specific learners");
+        var options = List.of("Print for all learners", "Print for a specific learner");
         view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, null, (index, value) -> {
             if (index == 0) {
                 String msg = ReportPrinter.prettyPrintLearnerReports(generateLearnerReportUseCase.getReportForAllLearners());

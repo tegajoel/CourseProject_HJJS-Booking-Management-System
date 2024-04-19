@@ -1,9 +1,12 @@
 package presentation.view;
 
+import domain.entity.Rating;
+import domain.entity.coach.CoachReport;
 import domain.entity.learner.LearnerReport;
 import domain.entity.lesson.Lesson;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ReportPrinter {
@@ -51,10 +54,52 @@ public class ReportPrinter {
                 .toString();
     }
 
+    public static String prettyPrintCoachReports(List<CoachReport> reports) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n+-------------------------------------------------+\n");
+        sb.append("|               Coach Reports List                |\n");
+        sb.append("+-------------------------------------------------+\n");
+
+        for (CoachReport report : reports) {
+            sb.append(prettyPrintCoachReport(report));
+            sb.append("+-------------------------------------------------+\n");
+        }
+
+        return sb.toString();
+    }
+
+    public static String prettyPrintCoachReport(CoachReport coachReport) {
+        return new StringBuilder()
+                .append("\n+-------------------------------------------------+\n")
+                .append("|                  Coach Report                   |\n")
+                .append("+-------------------------------------------------+\n")
+                .append(String.format("| Name: %-41s |\n", coachReport.coachName()))
+                .append(String.format("| Number of Lessons Taught: %-21s |\n", coachReport.numberOfLessonsTaught()))
+                .append("| Lessons Taught:                                 |\n")
+                .append(formatLessons(coachReport.lessonsTaught()))
+                .append(String.format("| Average Lesson Rating: %-24s |\n", coachReport.averageLessonRating().hasRating() ? coachReport.averageLessonRating().getRatingValue() : "None"))
+                .append("| Average Rating per Lesson:                      |\n")
+                .append(formatAverageRatingPerLesson(coachReport.averageRatingPerLesson()))
+                .append("+-------------------------------------------------+\n")
+                .toString();
+    }
+
+    private static String formatAverageRatingPerLesson(List<Map<Rating, Lesson>> averageRatingPerLesson) {
+        if (averageRatingPerLesson.isEmpty()) {
+            return "| None                                            |\n";
+        }
+        return averageRatingPerLesson.stream()
+                .map(entry -> entry.entrySet().stream()
+                        .map(e -> String.format("| - %-30s : Rating %-5s |\n", e.getValue().getName(), e.getKey().hasRating() ? e.getKey().getRatingValue() : "None"))
+                        .collect(Collectors.joining()))
+                .collect(Collectors.joining());
+    }
+
     private static String formatLessons(List<Lesson> lessons) {
         return lessons.isEmpty() ? "| None                                            |\n" :
                 lessons.stream()
-                        .map(lesson -> String.format("| - %-44s |\n", lesson.getName()))
+                        .map(lesson -> String.format("| - %-45s |\n", lesson.getName()))
                         .collect(Collectors.joining());
     }
+
 }

@@ -9,6 +9,10 @@ public enum OptionPickerStyle {
      */
     VERTICAL,
     /**
+     * Displayed as a vertical list with an option to exit the app
+     */
+    VERTICAL_WITH_EXIT_APP_OPTION,
+    /**
      * Displayed as a horizontal list
      */
     HORIZONTAL

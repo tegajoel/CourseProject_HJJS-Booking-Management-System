@@ -16,6 +16,7 @@ public class GenerateCoachReportUseCaseTest {
     private GenerateCoachReportUseCase useCase;
     private CoachRepository coachRepository;
     private Coach testCoach;
+    private final String lessonTime = "4-5pm";
 
     @BeforeEach
     void setUp() {

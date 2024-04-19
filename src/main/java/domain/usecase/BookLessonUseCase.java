@@ -29,13 +29,11 @@ public class BookLessonUseCase {
         }
 
         if (lesson.getRegisteredLearners().size() >= 4) {
-            int activeLessons = 0;
-            for (Learner ln : lesson.getRegisteredLearners()) {
-                if (ln.getLessonStatus(lesson) != LessonStatus.CANCELLED) {
-                    activeLessons++;
-                }
-            }
-
+            int activeLessons = lesson.getRegisteredLearners()
+                    .stream()
+                    .filter(ln -> ln.getLessonStatus(lesson)!= LessonStatus.CANCELLED)
+                    .toList()
+                    .size();
             if (activeLessons >= 4) {
                 return Result.error(Error.LESSON_FULLY_BOOKED);
             }

@@ -1,4 +1,4 @@
-package presentation.view.widgets.optionpicker;
+package presentation.view.components.optionpicker;
 
 /**
  * Style of the options to be displayed

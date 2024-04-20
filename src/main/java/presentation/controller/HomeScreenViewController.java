@@ -16,10 +16,10 @@ import domain.util.IdGenerator;
 import domain.util.LessonUtil;
 import domain.util.Result;
 import presentation.view.CLIView;
-import presentation.view.widgets.text.InputConsumer;
+import presentation.view.components.text.InputConsumer;
 import presentation.view.ReportPrinter;
-import presentation.view.widgets.optionpicker.OptionPickerStyle;
-import presentation.view.widgets.text.MessageType;
+import presentation.view.components.optionpicker.OptionPickerStyle;
+import presentation.view.components.text.MessageType;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -1,10 +1,10 @@
 package presentation.view;
 
 import domain.util.Result;
-import presentation.view.widgets.optionpicker.OptionPickedListener;
-import presentation.view.widgets.optionpicker.OptionPickerStyle;
-import presentation.view.widgets.text.InputConsumer;
-import presentation.view.widgets.text.MessageType;
+import presentation.view.components.optionpicker.OptionPickedListener;
+import presentation.view.components.optionpicker.OptionPickerStyle;
+import presentation.view.components.text.InputConsumer;
+import presentation.view.components.text.MessageType;
 
 import java.util.List;
 import java.util.Scanner;

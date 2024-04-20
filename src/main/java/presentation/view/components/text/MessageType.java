@@ -1,4 +1,4 @@
-package presentation.view.widgets.text;
+package presentation.view.components.text;
 
 import presentation.view.CLIView;
 

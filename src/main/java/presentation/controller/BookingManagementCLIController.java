@@ -138,29 +138,7 @@ public class BookingManagementCLIController {
     }
 
     private void onBookSwimmingLesson() {
-        requestLearnerById(learner -> {
-            requestLessonFromAllLessons(lesson -> {
-                var result = bookLessonUseCase.bookLesson(lesson, learner);
-
-                if (result.isSuccess()) {
-                    printBookingDetails(learner, lesson);
-                    showExitOrMainMenuOption();
-                } else {
-                    String errorMsg = switch (result.getError()) {
-                        case LESSON_ABOVE_LEARNER_GRADE ->
-                                "This grade (" + lesson.getGrade() + ") lesson is above your current grade of " + learner.getGrade();
-                        case LESSON_BELOW_LEARNER_GRADE ->
-                                "This grade (" + lesson.getGrade() + ") lesson is below your current grade of " + learner.getGrade();
-                        case DUPLICATE_BOOKING -> "You have already booked this lesson";
-                        case LESSON_FULLY_BOOKED -> "This lesson is fully booked";
-                    };
-                    view.displayMessage("Booking Failed", MessageType.ERROR);
-                    view.displayMessage(errorMsg, MessageType.ERROR);
-
-                    showExitOrMainMenuOption();
-                }
-            });
-        });
+        requestLearnerById(learner -> requestLessonFromAllLessons(lesson -> doBookLesson(lesson, learner)));
     }
 
     private void onRegisterNewUser() {
@@ -196,10 +174,10 @@ public class BookingManagementCLIController {
 
         if (gradeBeingRegistered == null) {
             view.requestUserInput("Do you have any swimming experience? [y/n]", data -> {
-                if (data.equalsIgnoreCase("n")) {
+                if (data.trim().equalsIgnoreCase("n") || data.trim().equalsIgnoreCase("no")) {
                     gradeBeingRegistered = 0;
                     return InputConsumer.success;
-                } else if (data.equalsIgnoreCase("y")) {
+                } else if (data.trim().equalsIgnoreCase("y") || data.trim().equalsIgnoreCase("yes")) {
                     view.requestUserInput("Please enter your swimming level [0-5]", data2 -> {
                         try {
                             gradeBeingRegistered = Integer.parseInt(data2);
@@ -278,32 +256,26 @@ public class BookingManagementCLIController {
                     }
                 });
             } else {
-                requestPickFromLessons("Please select from one of your booked lesson to attend", bookedLessons, false, lesson -> {
-                    var result = attendLessonUseCase.attendLesson(lesson, learner, this::provideLessonReview);
-
-                    if (result.isSuccess()) {
-                        printSuccessfulLessonAttendedMsg(lesson, learner);
-                        showExitOrMainMenuOption();
-                    } else {
-                        String errorMsg = switch (result.getError()) {
-                            case LEARNER_NOT_REGISTERED_TO_LESSON ->
-                                    "You cannot attend this lesson as you are not registered for it";
-                            case LESSON_ALREADY_ATTENDED -> "You have already attended this lesson";
-                            case INVALID_REVIEW_RATING -> "Review rating invalid. it should be between 1 to 5";
-                            case EMPTY_REVIEW_MESSAGE -> "You provided an empty review message";
-                        };
-                        view.displayMessage(errorMsg, MessageType.ERROR);
-                        showExitOrMainMenuOption();
-                    }
-                });
+                requestPickFromLessons(
+                        "Please select from one of your booked lesson to attend",
+                        bookedLessons, false,
+                        lesson -> doAttendLesson(lesson, learner));
             }
         });
     }
 
     private void onManageOrCancelBooking() {
         requestLearnerById(learner -> {
-            if (learner.getRegisteredLessons().isEmpty()) {
-                view.displayMessage("You have not yet booked any lesson to cancel or amend", MessageType.ERROR);
+
+            var filteredLessons = learner.getRegisteredLessons()
+                    .stream()
+                    .filter(lesson -> (lesson.getLessonStatus() == LessonStatus.CANCELLED || lesson.getLessonStatus() == LessonStatus.BOOKED))
+                    .toList();
+
+            if (filteredLessons.isEmpty()) {
+                var msg = learner.getRegisteredLessons().isEmpty() ? "You have not yet booked any lesson to cancel or amend"
+                        : "You have attended all you booked lessons, and you can only amend lessons that you have not attended.";
+                view.displayMessage(msg, MessageType.ERROR);
                 var options = List.of("Book a lesson", "Return to Main menu", "Exit App");
                 view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, "Choose an option", (index, value) -> {
                     switch (index) {
@@ -313,10 +285,50 @@ public class BookingManagementCLIController {
                     }
                 });
             } else {
-//                show
+                requestPickFromLessons(
+                        "Please select from one of your booked or cancelled lessons to modify",
+                        filteredLessons.stream().map(RegisteredLesson::getLesson).toList(),
+                        true,
+                        lesson -> {
+                            var registeredLesson = filteredLessons.stream().filter(ln -> ln.getLesson().equals(lesson)).findFirst();
+                            if (registeredLesson.isEmpty() || registeredLesson.get().getLessonStatus() == LessonStatus.ATTENDED) {
+                                view.displayMessage("System Error", MessageType.ERROR);
+                                showExitOrMainMenuOption();
+                                return;
+                            }
+
+                            if (registeredLesson.get().getLessonStatus() == LessonStatus.CANCELLED) {
+                                var options = List.of("Rebook");
+                                view.showOptionsPicker(
+                                        options,
+                                        OptionPickerStyle.HORIZONTAL,
+                                        "Select an option",
+                                        (index, value) -> doBookLesson(lesson, learner));
+                            } else {
+                                var options = List.of("Cancel Booking", "Attend Lesson");
+                                view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, "Select an option", (index, value) -> {
+                                    if (index == 1) {
+                                        doAttendLesson(lesson, learner);
+                                    } else if (index == 0) {
+                                        var result = cancelLessonUseCase.cancelLesson(lesson, learner);
+                                        if (result.isSuccess()) {
+                                            view.displayMessage("Booking cancelled successfully!", MessageType.INFO);
+                                        } else {
+                                            String msg = switch (result.getError()) {
+                                                case LESSON_ALREADY_ATTENDED -> "You have already attended this lesson";
+                                                case LESSON_ALREADY_CANCELLED ->
+                                                        "This lesson has already been cancelled";
+                                                case NO_BOOKING_FOR_LESSON -> "You are not registered for this lesson";
+                                            };
+                                            view.displayMessage(msg, MessageType.ERROR);
+                                        }
+                                        showExitOrMainMenuOption();
+                                    }
+                                });
+                            }
+                        });
             }
         });
-
     }
 
     private void onPrintCoachReport() {
@@ -369,6 +381,46 @@ public class BookingManagementCLIController {
         }
 
         showExitOrMainMenuOption();
+    }
+
+    private void doAttendLesson(Lesson lesson, Learner learner) {
+        var result = attendLessonUseCase.attendLesson(lesson, learner, this::provideLessonReview);
+
+        if (result.isSuccess()) {
+            printSuccessfulLessonAttendedMsg(lesson, learner);
+        } else {
+            String errorMsg = switch (result.getError()) {
+                case LEARNER_NOT_REGISTERED_TO_LESSON ->
+                        "You cannot attend this lesson as you are not registered for it";
+                case LESSON_ALREADY_ATTENDED -> "You have already attended this lesson";
+                case INVALID_REVIEW_RATING -> "Review rating invalid. it should be between 1 to 5";
+                case EMPTY_REVIEW_MESSAGE -> "You provided an empty review message";
+            };
+            view.displayMessage(errorMsg, MessageType.ERROR);
+        }
+        showExitOrMainMenuOption();
+    }
+
+    private void doBookLesson(Lesson lesson, Learner learner) {
+        var result = bookLessonUseCase.bookLesson(lesson, learner);
+
+        if (result.isSuccess()) {
+            printBookingDetails(learner, lesson);
+            showExitOrMainMenuOption();
+        } else {
+            String errorMsg = switch (result.getError()) {
+                case LESSON_ABOVE_LEARNER_GRADE ->
+                        "This grade (" + lesson.getGrade() + ") lesson is above your current grade of " + learner.getGrade();
+                case LESSON_BELOW_LEARNER_GRADE ->
+                        "This grade (" + lesson.getGrade() + ") lesson is below your current grade of " + learner.getGrade();
+                case DUPLICATE_BOOKING -> "You have already booked this lesson";
+                case LESSON_FULLY_BOOKED -> "This lesson is fully booked";
+            };
+            view.displayMessage("Booking Failed", MessageType.ERROR);
+            view.displayMessage(errorMsg, MessageType.ERROR);
+
+            showExitOrMainMenuOption();
+        }
     }
 
     private void closeApp() {

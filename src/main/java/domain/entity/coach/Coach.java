@@ -51,4 +51,12 @@ public class Coach {
     public int hashCode() {
         return Objects.hash(name);
     }
+
+    @Override
+    public String toString() {
+        return "Coach{" +
+                "name='" + name + '\'' +
+                ", assignedLessons=" + assignedLessons +
+                '}';
+    }
 }

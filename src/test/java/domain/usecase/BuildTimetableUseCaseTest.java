@@ -77,11 +77,7 @@ class BuildTimetableUseCaseTest {
     void buildAndGetLessons_eachLessonHasId_noExceptionThrownToGetEachId() {
         var result = useCase.buildAndGetLessons(coaches);
 
-        var error = assertThrows(IllegalStateException.class, () -> {
-            result.forEach(Lesson::getId);
-        });
-
-        assertNull(error);
+        assertDoesNotThrow(() -> result.forEach(Lesson::getId));
     }
 
     @Test
@@ -129,5 +125,87 @@ class BuildTimetableUseCaseTest {
             }
         }
         assertTrue(hasOnyOnValidDays);
+    }
+
+    @Test
+    void buildAndGetLessons_emptyCoachListPassed_throwsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> useCase.buildAndGetLessons(new ArrayList<>()));
+    }
+
+    @Test
+    void buildAndGetLessons_mondayLessonAreInValidTime_returnsTrue() {
+        var result = useCase.buildAndGetLessons(coaches)
+                .stream()
+                .filter(lesson -> lesson.getLessonDate().getDayOfWeek() == DayOfWeek.MONDAY
+                ).toList();
+
+        boolean hasOnValidTime = true;
+
+        for (Lesson lesson : result) {
+            var time = lesson.getLessonTime();
+            if (!time.equalsIgnoreCase("4-5pm") && !time.equalsIgnoreCase("5-6pm") && !time.equalsIgnoreCase("6-7pm")) {
+                hasOnValidTime = false;
+                break;
+            }
+        }
+        assertTrue(hasOnValidTime);
+    }
+
+
+    @Test
+    void buildAndGetLessons_WednesdayLessonAreInValidTime_returnsTrue() {
+        var result = useCase.buildAndGetLessons(coaches)
+                .stream()
+                .filter(lesson -> lesson.getLessonDate().getDayOfWeek() == DayOfWeek.WEDNESDAY
+                ).toList();
+
+        boolean hasOnValidTime = true;
+
+        for (Lesson lesson : result) {
+            var time = lesson.getLessonTime();
+            if (!time.equalsIgnoreCase("4-5pm") && !time.equalsIgnoreCase("5-6pm") && !time.equalsIgnoreCase("6-7pm")) {
+                hasOnValidTime = false;
+                break;
+            }
+        }
+        assertTrue(hasOnValidTime);
+    }
+
+    @Test
+    void buildAndGetLessons_FridayLessonAreInValidTime_returnsTrue() {
+        var result = useCase.buildAndGetLessons(coaches)
+                .stream()
+                .filter(lesson -> lesson.getLessonDate().getDayOfWeek() == DayOfWeek.FRIDAY
+                ).toList();
+
+        boolean hasOnValidTime = true;
+
+        for (Lesson lesson : result) {
+            var time = lesson.getLessonTime();
+            if (!time.equalsIgnoreCase("4-5pm") && !time.equalsIgnoreCase("5-6pm") && !time.equalsIgnoreCase("6-7pm")) {
+                hasOnValidTime = false;
+                break;
+            }
+        }
+        assertTrue(hasOnValidTime);
+    }
+
+    @Test
+    void buildAndGetLessons_saturdayLessonAreInValidTime_returnsTrue() {
+        var result = useCase.buildAndGetLessons(coaches)
+                .stream()
+                .filter(lesson -> lesson.getLessonDate().getDayOfWeek() == DayOfWeek.SATURDAY
+                ).toList();
+
+        boolean hasOnValidTime = true;
+
+        for (Lesson lesson : result) {
+            var time = lesson.getLessonTime();
+            if (!time.equalsIgnoreCase("2-3pm") && !time.equalsIgnoreCase("3-4pm")) {
+                hasOnValidTime = false;
+                break;
+            }
+        }
+        assertTrue(hasOnValidTime);
     }
 }

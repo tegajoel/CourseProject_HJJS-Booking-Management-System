@@ -186,4 +186,18 @@ public class Lesson {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    @Override
+    public String toString() {
+        return "Lesson{" +
+                "name='" + name + '\'' +
+                ", grade=" + grade +
+                ", coach=" + coach +
+                ", lessonDate=" + lessonDate +
+                ", lessonTime='" + lessonTime + '\'' +
+                ", registeredLearners=" + registeredLearners +
+                ", reviews=" + reviews +
+                ", id=" + id +
+                '}';
+    }
 }

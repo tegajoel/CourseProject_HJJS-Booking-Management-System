@@ -71,7 +71,16 @@ public class BookingManagementCLIController {
 
 
     private void initialize() {
-        view.displayAppHeader("Booking Management System");
+        String appHeader = """
+
+                +-----------------------------------+
+                |    -  HJSS Booking Manager  -     |
+                +-----------------------------------+
+
+                """;
+
+        view.displayMessage(appHeader, MessageType.INFO);
+
         Coach coach1 = new Coach("Peter");
         Coach coach2 = new Coach("John");
         coachRepository.addNewCoach(coach1);
@@ -285,32 +294,32 @@ public class BookingManagementCLIController {
                     }
                 });
             } else {
-                requestPickFromLessons(
+                var options = filteredLessons
+                        .stream()
+                        .map(RegisteredLesson::getLesson)
+                        .map(lesson -> getLessonDetails(lesson, true) + " (" + learner.getLessonStatus(lesson) + ")")
+                        .toList();
+                view.showOptionsPicker(
+                        options,
+                        OptionPickerStyle.VERTICAL,
                         "Please select from one of your booked or cancelled lessons to modify",
-                        filteredLessons.stream().map(RegisteredLesson::getLesson).toList(),
-                        true,
-                        lesson -> {
-                            var registeredLesson = filteredLessons.stream().filter(ln -> ln.getLesson().equals(lesson)).findFirst();
-                            if (registeredLesson.isEmpty() || registeredLesson.get().getLessonStatus() == LessonStatus.ATTENDED) {
-                                view.displayMessage("System Error", MessageType.ERROR);
-                                showExitOrMainMenuOption();
-                                return;
-                            }
+                        (index, value) -> {
+                            var registeredLesson = filteredLessons.get(index);
 
-                            if (registeredLesson.get().getLessonStatus() == LessonStatus.CANCELLED) {
-                                var options = List.of("Rebook");
+                            if (registeredLesson.getLessonStatus() == LessonStatus.CANCELLED) {
+                                var options1 = List.of("Rebook");
                                 view.showOptionsPicker(
-                                        options,
+                                        options1,
                                         OptionPickerStyle.HORIZONTAL,
                                         "Select an option",
-                                        (index, value) -> doBookLesson(lesson, learner));
+                                        (index1, value1) -> doBookLesson(registeredLesson.getLesson(), learner));
                             } else {
-                                var options = List.of("Cancel Booking", "Attend Lesson");
-                                view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, "Select an option", (index, value) -> {
-                                    if (index == 1) {
-                                        doAttendLesson(lesson, learner);
-                                    } else if (index == 0) {
-                                        var result = cancelLessonUseCase.cancelLesson(lesson, learner);
+                                var option1 = List.of("Cancel Booking", "Attend Lesson");
+                                view.showOptionsPicker(option1, OptionPickerStyle.HORIZONTAL, "Select an option", (index1, value1) -> {
+                                    if (index1 == 1) {
+                                        doAttendLesson(registeredLesson.getLesson(), learner);
+                                    } else if (index1 == 0) {
+                                        var result = cancelLessonUseCase.cancelLesson(registeredLesson.getLesson(), learner);
                                         if (result.isSuccess()) {
                                             view.displayMessage("Booking cancelled successfully!", MessageType.INFO);
                                         } else {
@@ -462,7 +471,12 @@ public class BookingManagementCLIController {
         });
     }
 
-    private void requestPickFromLessons(String message, List<Lesson> lessons, boolean showLessonCapacity, Consumer<Lesson> lessonConsumer) {
+    private void requestPickFromLessons(
+            String message,
+            List<Lesson> lessons,
+            boolean showLessonCapacity,
+            Consumer<Lesson> lessonConsumer
+    ) {
         List<String> options = lessons.stream().map(lesson -> getLessonDetails(lesson, showLessonCapacity)).toList();
         view.showOptionsPicker(
                 options,

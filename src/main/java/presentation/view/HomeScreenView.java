@@ -14,7 +14,7 @@ public class HomeScreenView implements CLIView {
 
     @Override
     public void showMessage(String message, MessageType messageType) {
-        displayTextInternal(message, messageType == MessageType.INFO ? Style.NORMAL : Style.RECEIVED);
+        displayTextInternal(message, messageType == MessageType.INFO ? Style.NORMAL : Style.SENT);
     }
 
     @Override

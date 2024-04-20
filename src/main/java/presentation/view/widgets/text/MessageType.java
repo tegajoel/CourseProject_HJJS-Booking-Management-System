@@ -1,7 +1,9 @@
 package presentation.view.widgets.text;
 
+import presentation.view.CLIView;
+
 /**
- * The nature of message being displayed in the {@link presentation.view.BookingManagementCLIView}
+ * The nature of message being displayed in the {@link CLIView}
  */
 public enum MessageType {
     /**

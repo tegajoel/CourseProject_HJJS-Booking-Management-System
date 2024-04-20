@@ -4,6 +4,7 @@ import domain.entity.coach.Coach;
 import domain.entity.learner.Learner;
 import domain.entity.lesson.Lesson;
 import domain.entity.lesson.LessonStatus;
+import domain.entity.lesson.RegisteredLesson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -156,7 +157,7 @@ class BookLessonUseCaseTest {
     }
 
     @Test
-    public void bookLesson_bookingCancelledSucceeds_LessonStatusUpdatedToBooked() {
+    public void bookLesson_bookingCancelledSucceeds_lessonStatusUpdatedToBooked() {
         Learner learner = new Learner("John doe", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
 
         useCase.bookLesson(testLesson, learner); // book the lesson
@@ -165,6 +166,54 @@ class BookLessonUseCaseTest {
         useCase.bookLesson(testLesson, learner);// rebook the lesson
 
         assertEquals(LessonStatus.BOOKED, learner.getLessonStatus(testLesson));
+    }
+
+    @Test
+    public void bookLesson_bookingCancelledSucceeds_learnerNotDuplicatedInLesson() {
+        Learner learner = new Learner("John doe", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
+
+        useCase.bookLesson(testLesson, learner); // book the lesson
+
+        learner.updateRegisteredLessonStatus(testLesson, LessonStatus.CANCELLED); // cancel the lesson
+        useCase.bookLesson(testLesson, learner);// rebook the lesson
+
+        int instanceCount = 0;
+        for (Learner registeredLearner : testLesson.getRegisteredLearners()) {
+            if (registeredLearner.equals(learner)){
+                instanceCount++;
+            }
+        }
+        assertTrue(instanceCount <= 1);
+    }
+
+    @Test
+    public void bookLesson_bookingCancelledSucceeds_lessonNotDuplicatedInLearner() {
+        Learner learner = new Learner("John doe", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
+
+        useCase.bookLesson(testLesson, learner); // book the lesson
+
+        learner.updateRegisteredLessonStatus(testLesson, LessonStatus.CANCELLED); // cancel the lesson
+        useCase.bookLesson(testLesson, learner);// rebook the lesson
+
+        int instanceCount = 0;
+        for (RegisteredLesson registeredLesson : learner.getRegisteredLessons()) {
+            if (registeredLesson.getLesson().equals(testLesson)){
+                instanceCount++;
+            }
+        }
+        assertTrue(instanceCount <= 1);
+    }
+
+    @Test
+    public void bookLesson_bookingCancelledSucceeds_learnerIsContainedInLesson() {
+        Learner learner = new Learner("John doe", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
+
+        useCase.bookLesson(testLesson, learner); // book the lesson
+
+        learner.updateRegisteredLessonStatus(testLesson, LessonStatus.CANCELLED); // cancel the lesson
+        useCase.bookLesson(testLesson, learner);// rebook the lesson
+
+        assertTrue(testLesson.getRegisteredLearners().contains(learner));
     }
 
     @Test

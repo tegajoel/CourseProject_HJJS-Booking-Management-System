@@ -25,6 +25,7 @@ public class GenerateLearnerReportUseCase {
      */
     public LearnerReport getReportForLearner(Learner learner) {
         return new LearnerReport(
+                learner.getId(),
                 learner.getName(),
                 learner.getAge(),
                 learner.getGender(),

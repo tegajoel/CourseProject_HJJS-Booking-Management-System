@@ -4,6 +4,7 @@ import domain.entity.lesson.Lesson;
 
 import java.util.List;
 public record LearnerReport(
+        int learnerId,
         String learnerName,
         int learnerAge,
         String learnerGender,

@@ -35,6 +35,7 @@ public class ReportPrinter {
                 .append("|                 Learner Report                  |\n")
                 .append("+-------------------------------------------------+\n")
                 .append(String.format("| Name: %-41s |\n", report.learnerName()))
+                .append(String.format("| ID: %-43s |\n", report.learnerId()))
                 .append(String.format("| Age: %-42s |\n", report.learnerAge()))
                 .append(String.format("| Gender: %-39s |\n", report.learnerGender()))
                 .append(String.format("| Current Grade: %-32s |\n", report.currentGrade()))

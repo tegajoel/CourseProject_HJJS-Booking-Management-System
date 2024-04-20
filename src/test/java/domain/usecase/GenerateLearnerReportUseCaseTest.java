@@ -34,6 +34,13 @@ class GenerateLearnerReportUseCaseTest {
     }
 
     @Test
+    void getReportForLearner_reportAndLearnerIDSame() {
+        learner.setName("Sam Smith");
+        learner.setId(123);
+        assertEquals(123, useCase.getReportForLearner(learner).learnerId());
+    }
+
+    @Test
     void getReportForLearner_reportAndLearnerAgeSame() {
         learner.setAge(4);
         assertEquals(4, useCase.getReportForLearner(learner).learnerAge());

@@ -16,7 +16,7 @@ import domain.util.IdGenerator;
 import domain.util.LessonUtil;
 import domain.util.Result;
 import presentation.view.CLIView;
-import presentation.view.InputConsumer;
+import presentation.view.widgets.text.InputConsumer;
 import presentation.view.ReportPrinter;
 import presentation.view.widgets.optionpicker.OptionPickerStyle;
 import presentation.view.widgets.text.MessageType;
@@ -25,7 +25,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class BookingManagementCLIController {
+public class HomeScreenViewController {
     private CLIView view;
     private final AttendLessonUseCase attendLessonUseCase;
     private final BookLessonUseCase bookLessonUseCase;
@@ -45,16 +45,16 @@ public class BookingManagementCLIController {
     String phoneNumberBeingRegistered = null;
     String emergencyContactBeingRegistered = null;
 
-    public BookingManagementCLIController(CLIView view,
-                                          AttendLessonUseCase attendLessonUseCase,
-                                          BookLessonUseCase bookLessonUseCase,
-                                          CancelLessonUseCase cancelLessonUseCase,
-                                          FilterLessonsUseCase filterLessonsUseCase,
-                                          GenerateCoachReportUseCase generateCoachReportUseCase,
-                                          GenerateLearnerReportUseCase generateLearnerReportUseCase,
-                                          RegisterNewLearnerUseCase registerNewLearnerUseCase,
-                                          LearnerRepository learnerRepository,
-                                          CoachRepository coachRepository) {
+    public HomeScreenViewController(CLIView view,
+                                    AttendLessonUseCase attendLessonUseCase,
+                                    BookLessonUseCase bookLessonUseCase,
+                                    CancelLessonUseCase cancelLessonUseCase,
+                                    FilterLessonsUseCase filterLessonsUseCase,
+                                    GenerateCoachReportUseCase generateCoachReportUseCase,
+                                    GenerateLearnerReportUseCase generateLearnerReportUseCase,
+                                    RegisterNewLearnerUseCase registerNewLearnerUseCase,
+                                    LearnerRepository learnerRepository,
+                                    CoachRepository coachRepository) {
         this.view = view;
         this.attendLessonUseCase = attendLessonUseCase;
         this.bookLessonUseCase = bookLessonUseCase;
@@ -128,10 +128,7 @@ public class BookingManagementCLIController {
 
         view.showOptionsPicker(menuOptions, OptionPickerStyle.VERTICAL_WITH_EXIT_APP_OPTION, "Main menu", (index, value) -> {
             switch (index) {
-                case 0 -> {
-                    view.showMessage("We'll need some details to get you registered", MessageType.INFO);
-                    onRegisterNewUser();
-                }
+                case 0 -> onRegisterNewUser();
                 case 1 -> onBookSwimmingLesson();
                 case 2 -> onManageOrCancelBooking();
                 case 3 -> onAttendSwimmingLesson();
@@ -151,6 +148,8 @@ public class BookingManagementCLIController {
     }
 
     private void onRegisterNewUser() {
+        view.showMessage("We'll need some details to get you registered", MessageType.INFO);
+
         if (nameBeingRegistered == null) {
             view.requestUserInput("Learner's name", data -> {
                 if (data.isBlank()) {
@@ -438,12 +437,10 @@ public class BookingManagementCLIController {
     }
 
     private void showExitOrMainMenuOption() {
-        var options = List.of("Return to Main menu", "Exit App");
-        view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, null, (index, value) -> {
+        var options = List.of("Return to Main menu");
+        view.showOptionsPicker(options, OptionPickerStyle.VERTICAL_WITH_EXIT_APP_OPTION, null, (index, value) -> {
             if (index == 0) {
                 showMainMenuOptions();
-            } else {
-                closeApp();
             }
         });
     }

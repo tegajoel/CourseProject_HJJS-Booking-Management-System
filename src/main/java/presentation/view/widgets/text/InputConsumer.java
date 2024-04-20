@@ -1,4 +1,4 @@
-package presentation.view;
+package presentation.view.widgets.text;
 
 import domain.util.Result;
 

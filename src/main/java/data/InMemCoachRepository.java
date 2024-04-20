@@ -35,4 +35,12 @@ public class InMemCoachRepository implements CoachRepository {
     public void addCoaches(List<Coach> coaches) {
         this.coaches.addAll(coaches);
     }
+
+    public void generateSampleCoaches(){
+        addNewCoach(new Coach("Peter"));
+        addNewCoach(new Coach("Helen"));
+        addNewCoach(new Coach("Johnson"));
+        addNewCoach(new Coach("Paula"));
+        addNewCoach(new Coach("Eugene"));
+    }
 }

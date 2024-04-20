@@ -21,8 +21,12 @@ import presentation.view.ReportPrinter;
 import presentation.view.components.optionpicker.OptionPickerStyle;
 import presentation.view.components.text.MessageType;
 
+import javax.swing.text.DateFormatter;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 
 public class HomeScreenViewController {
@@ -76,7 +80,6 @@ public class HomeScreenViewController {
                 +-----------------------------------+
                 |    -  HJSS Booking Manager  -     |
                 +-----------------------------------+
-
                 """;
 
         view.showMessage(appHeader, MessageType.INFO);
@@ -585,7 +588,8 @@ public class HomeScreenViewController {
         sb.append(" (Grade: ").append(lesson.getGrade());
         sb.append(", Date: ").append(formatLessonDate(lesson));
         sb.append(", Time: ").append(lesson.getLessonTime());
-        sb.append(", Average Rating: ").append(averageRating.hasRating() ? averageRating.getRatingValue() : "No rating yet").append(")");
+        sb.append(", Coach: ").append(lesson.getCoach().getName());
+        sb.append(", Avg. Rating: ").append(averageRating.hasRating() ? averageRating.getRatingValue() : "Not rated").append(")");
         if (showLessonCapacity) {
             int activeLessons = lesson.getRegisteredLearners().stream().filter(learner -> learner.getLessonStatus(lesson) != LessonStatus.CANCELLED).toList().size();
             boolean fullyBooked = activeLessons >= 4;
@@ -623,9 +627,7 @@ public class HomeScreenViewController {
     }
 
     private String formatLessonDate(Lesson lesson) {
-        String day = lesson.getLessonDate().getDayOfWeek().name();
-        day = day.substring(0, 1).toUpperCase() + day.substring(1).toLowerCase(); //capitalize
-        return day;
+        return lesson.getLessonDate().format(DateTimeFormatter.ofPattern("EEEE - MMMM d", Locale.ENGLISH));
     }
 
     private void printBookingDetails(Learner learner, Lesson lesson) {

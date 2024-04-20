@@ -15,7 +15,7 @@ import domain.usecase.*;
 import domain.util.IdGenerator;
 import domain.util.LessonUtil;
 import domain.util.Result;
-import presentation.view.BookingManagementCLIView;
+import presentation.view.CLIView;
 import presentation.view.InputConsumer;
 import presentation.view.ReportPrinter;
 import presentation.view.widgets.optionpicker.OptionPickerStyle;
@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class BookingManagementCLIController {
-    private BookingManagementCLIView view;
+    private CLIView view;
     private final AttendLessonUseCase attendLessonUseCase;
     private final BookLessonUseCase bookLessonUseCase;
     private final CancelLessonUseCase cancelLessonUseCase;
@@ -45,7 +45,7 @@ public class BookingManagementCLIController {
     String phoneNumberBeingRegistered = null;
     String emergencyContactBeingRegistered = null;
 
-    public BookingManagementCLIController(BookingManagementCLIView view,
+    public BookingManagementCLIController(CLIView view,
                                           AttendLessonUseCase attendLessonUseCase,
                                           BookLessonUseCase bookLessonUseCase,
                                           CancelLessonUseCase cancelLessonUseCase,
@@ -79,7 +79,7 @@ public class BookingManagementCLIController {
 
                 """;
 
-        view.displayMessage(appHeader, MessageType.INFO);
+        view.showMessage(appHeader, MessageType.INFO);
 
         Coach coach1 = new Coach("Peter");
         Coach coach2 = new Coach("John");
@@ -129,7 +129,7 @@ public class BookingManagementCLIController {
         view.showOptionsPicker(menuOptions, OptionPickerStyle.VERTICAL_WITH_EXIT_APP_OPTION, "Main menu", (index, value) -> {
             switch (index) {
                 case 0 -> {
-                    view.displayMessage("We'll need some details to get you registered", MessageType.INFO);
+                    view.showMessage("We'll need some details to get you registered", MessageType.INFO);
                     onRegisterNewUser();
                 }
                 case 1 -> onBookSwimmingLesson();
@@ -139,7 +139,7 @@ public class BookingManagementCLIController {
                 case 5 -> onPrintCoachReport();
                 case 6 -> onDisplayAllLearners();
                 default -> {
-                    view.displayMessage("Invalid Selection", MessageType.ERROR);
+                    view.showMessage("Invalid Selection", MessageType.ERROR);
                     showMainMenuOptions();
                 }
             }
@@ -240,7 +240,7 @@ public class BookingManagementCLIController {
                 case INVALID_PHONE_NUMBER, REPOSITORY_ERROR ->
                         "Please enter a valid phone number that is 11 digits. e.g 07874813069";
             };
-            view.displayMessage(errorMessage, MessageType.ERROR);
+            view.showMessage(errorMessage, MessageType.ERROR);
         }
 
         showMainMenuOptions();
@@ -255,7 +255,7 @@ public class BookingManagementCLIController {
                     .toList();
 
             if (bookedLessons.isEmpty()) {
-                view.displayMessage("You don't have any booked lesson to attend", MessageType.ERROR);
+                view.showMessage("You don't have any booked lesson to attend", MessageType.ERROR);
                 var options = List.of("Book a lesson", "Return to Main menu", "Exit App");
                 view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, "Choose an option", (index, value) -> {
                     switch (index) {
@@ -284,7 +284,7 @@ public class BookingManagementCLIController {
             if (filteredLessons.isEmpty()) {
                 var msg = learner.getRegisteredLessons().isEmpty() ? "You have not yet booked any lesson to cancel or amend"
                         : "You have attended all you booked lessons, and you can only amend lessons that you have not attended.";
-                view.displayMessage(msg, MessageType.ERROR);
+                view.showMessage(msg, MessageType.ERROR);
                 var options = List.of("Book a lesson", "Return to Main menu", "Exit App");
                 view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, "Choose an option", (index, value) -> {
                     switch (index) {
@@ -321,7 +321,7 @@ public class BookingManagementCLIController {
                                     } else if (index1 == 0) {
                                         var result = cancelLessonUseCase.cancelLesson(registeredLesson.getLesson(), learner);
                                         if (result.isSuccess()) {
-                                            view.displayMessage("Booking cancelled successfully!", MessageType.INFO);
+                                            view.showMessage("Booking cancelled successfully!", MessageType.INFO);
                                         } else {
                                             String msg = switch (result.getError()) {
                                                 case LESSON_ALREADY_ATTENDED -> "You have already attended this lesson";
@@ -329,7 +329,7 @@ public class BookingManagementCLIController {
                                                         "This lesson has already been cancelled";
                                                 case NO_BOOKING_FOR_LESSON -> "You are not registered for this lesson";
                                             };
-                                            view.displayMessage(msg, MessageType.ERROR);
+                                            view.showMessage(msg, MessageType.ERROR);
                                         }
                                         showExitOrMainMenuOption();
                                     }
@@ -345,12 +345,12 @@ public class BookingManagementCLIController {
         view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, null, (index, value) -> {
             if (index == 0) {
                 String msg = ReportPrinter.prettyPrintCoachReports(generateCoachReportUseCase.getReportForAllCoaches());
-                view.displayMessage(msg, MessageType.INFO);
+                view.showMessage(msg, MessageType.INFO);
                 showExitOrMainMenuOption();
             } else {
                 getCoachFromAllCoaches("Please select a coach", coach -> {
                     String msg = ReportPrinter.prettyPrintCoachReport(generateCoachReportUseCase.getReportForCoach(coach));
-                    view.displayMessage(msg, MessageType.INFO);
+                    view.showMessage(msg, MessageType.INFO);
                     showExitOrMainMenuOption();
                 });
             }
@@ -362,12 +362,12 @@ public class BookingManagementCLIController {
         view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, null, (index, value) -> {
             if (index == 0) {
                 String msg = ReportPrinter.prettyPrintLearnerReports(generateLearnerReportUseCase.getReportForAllLearners());
-                view.displayMessage(msg, MessageType.INFO);
+                view.showMessage(msg, MessageType.INFO);
                 showExitOrMainMenuOption();
             } else {
                 requestLearnerById(learner -> {
                     String msg = ReportPrinter.prettyPrintLearnerReport(generateLearnerReportUseCase.getReportForLearner(learner));
-                    view.displayMessage(msg, MessageType.INFO);
+                    view.showMessage(msg, MessageType.INFO);
                     showExitOrMainMenuOption();
                 });
             }
@@ -384,7 +384,7 @@ public class BookingManagementCLIController {
                     +-------------------------------------------------+
                     """;
 
-            view.displayMessage(msg, MessageType.INFO);
+            view.showMessage(msg, MessageType.INFO);
         } else {
             learners.forEach(this::printLearnerDetails);
         }
@@ -405,7 +405,7 @@ public class BookingManagementCLIController {
                 case INVALID_REVIEW_RATING -> "Review rating invalid. it should be between 1 to 5";
                 case EMPTY_REVIEW_MESSAGE -> "You provided an empty review message";
             };
-            view.displayMessage(errorMsg, MessageType.ERROR);
+            view.showMessage(errorMsg, MessageType.ERROR);
         }
         showExitOrMainMenuOption();
     }
@@ -425,15 +425,15 @@ public class BookingManagementCLIController {
                 case DUPLICATE_BOOKING -> "You have already booked this lesson";
                 case LESSON_FULLY_BOOKED -> "This lesson is fully booked";
             };
-            view.displayMessage("Booking Failed", MessageType.ERROR);
-            view.displayMessage(errorMsg, MessageType.ERROR);
+            view.showMessage("Booking Failed", MessageType.ERROR);
+            view.showMessage(errorMsg, MessageType.ERROR);
 
             showExitOrMainMenuOption();
         }
     }
 
     private void closeApp() {
-        view.displayMessage("Exiting...", MessageType.INFO);
+        view.showMessage("Exiting...", MessageType.INFO);
         System.exit(0);
     }
 
@@ -462,7 +462,7 @@ public class BookingManagementCLIController {
                     consumer.accept(result.getData());
                     return InputConsumer.success;
                 } else {
-                    view.displayMessage("\nEnter 0 to to return to the Main menu", MessageType.INFO);
+                    view.showMessage("\nEnter 0 to to return to the Main menu", MessageType.INFO);
                     return Result.error("No learner exits with this id.");
                 }
             } catch (Exception e) {
@@ -488,7 +488,7 @@ public class BookingManagementCLIController {
     private void requestLessonFromAllLessons(Consumer<Lesson> lessonConsumer) {
         showOptionToPickLessonFromAllLessons(lessons -> {
             if (lessons.isEmpty()) {
-                view.displayMessage("There are no lessons to choose from", MessageType.INFO);
+                view.showMessage("There are no lessons to choose from", MessageType.INFO);
                 showExitOrMainMenuOption();
                 return;
             }
@@ -550,7 +550,7 @@ public class BookingManagementCLIController {
                     if (result.isSuccess()) {
                         caller.accept(result.getData());
                     } else {
-                        view.displayMessage("System Error", MessageType.ERROR);
+                        view.showMessage("System Error", MessageType.ERROR);
                         showMainMenuOptions();
                     }
                 });
@@ -602,7 +602,7 @@ public class BookingManagementCLIController {
         Review review = new Review("", 0);
         var options = List.of("Very dissatisfied", "Dissatisfied", "Ok", "Satisfied", "Very Satisfied");
 
-        view.displayMessage("Please leave a review for this lesson", MessageType.INFO);
+        view.showMessage("Please leave a review for this lesson", MessageType.INFO);
 
         view.requestUserInput("Review Message", data -> {
             review.updateMessage(data);
@@ -649,7 +649,7 @@ public class BookingManagementCLIController {
         sb.append("|                 Booking details                 |\n");
         sb.append("+-------------------------------------------------+\n");
 
-        view.displayMessage(sb.toString(), MessageType.INFO);
+        view.showMessage(sb.toString(), MessageType.INFO);
     }
 
     private void printSuccessfulLearnerRegistrationDetails(Learner learner) {
@@ -671,7 +671,7 @@ public class BookingManagementCLIController {
                 .append("+-------------------------------------------------+\n")
                 .toString();
 
-        view.displayMessage(message, MessageType.INFO);
+        view.showMessage(message, MessageType.INFO);
     }
 
     private void printSuccessfulLessonAttendedMsg(Lesson lesson, Learner learner) {
@@ -684,7 +684,7 @@ public class BookingManagementCLIController {
         sb.append(String.format("| Your current Grade: %-27d |\n", learner.getGrade()));
         sb.append("+-------------------------------------------------+\n");
 
-        view.displayMessage(sb.toString(), MessageType.INFO);
+        view.showMessage(sb.toString(), MessageType.INFO);
     }
 
     private void resetRegistrationDetails() {
@@ -709,7 +709,7 @@ public class BookingManagementCLIController {
                 .append(String.format("| Total Registered Lessons: %-21s |\n", learner.getRegisteredLessons().size()))
                 .append("+-------------------------------------------------+")
                 .toString();
-        view.displayMessage(msg, MessageType.INFO);
+        view.showMessage(msg, MessageType.INFO);
     }
 
 }

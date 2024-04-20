@@ -1,17 +1,14 @@
 package presentation.view;
 
-import domain.util.Result;
 import presentation.view.widgets.optionpicker.OptionPickedListener;
 import presentation.view.widgets.optionpicker.OptionPickerStyle;
 import presentation.view.widgets.text.MessageType;
 
 import java.util.List;
 
-public interface BookingManagementCLIView {
+public interface CLIView {
 
-    void displayAppHeader(String message);
-
-    void displayMessage(String message, MessageType messageType);
+    void showMessage(String message, MessageType messageType);
 
     void requestUserInput(String prompt, InputConsumer inputConsumer);
 

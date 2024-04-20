@@ -10,9 +10,9 @@ import java.util.Random;
  */
 public class IdGenerator {
     private static final Random random = new Random();
-    private static final int LESSON_PREFIX = 1;  // First digit for lesson IDs
-    private static final int LEARNER_PREFIX = 2; // First digit for learner IDs
-    private static final int ID_RANGE = 100;    // Range for the remaining three digits
+    private static final String LESSON_PREFIX = "1";  // First digit for lesson IDs
+    private static final String LEARNER_PREFIX = "2"; // First digit for learner IDs
+    private static final int ID_RANGE = 1000;    // Range for the remaining four digits
 
     /**
      * Generate a new id for this learner
@@ -21,7 +21,8 @@ public class IdGenerator {
      * @return generated id
      */
     public static int generateId(Learner learner) {
-        return Integer.parseInt(LEARNER_PREFIX + learner.getGrade() + String.format("%03d", random.nextInt(ID_RANGE)));
+        String id = LEARNER_PREFIX + learner.getGrade() + String.format("%04d", random.nextInt(ID_RANGE));
+        return Integer.parseInt(id);
     }
 
     /**
@@ -31,7 +32,8 @@ public class IdGenerator {
      * @return generated id
      */
     public static int generateId(Lesson lesson) {
-        return Integer.parseInt(LESSON_PREFIX + lesson.getGrade() + String.format("%03d", random.nextInt(ID_RANGE)));
+        String id = LESSON_PREFIX + lesson.getGrade() + String.format("%04d", random.nextInt(ID_RANGE));
+        return Integer.parseInt(id);
     }
 
 }

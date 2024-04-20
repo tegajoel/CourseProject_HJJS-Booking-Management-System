@@ -25,6 +25,10 @@ public class BookLessonUseCase {
         }
 
         if (lesson.getRegisteredLearners().contains(learner)) {
+            if (learner.getLessonStatus(lesson) == LessonStatus.CANCELLED){
+                learner.updateRegisteredLessonStatus(lesson, LessonStatus.BOOKED);
+                return Result.success(Result.NO_VALUE);
+            }
             return Result.error(Error.DUPLICATE_BOOKING);
         }
 

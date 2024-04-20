@@ -10,6 +10,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ReportPrinter {
+    /**
+     * Pretty print a list of learner report
+     *
+     * @param reports reports
+     * @return formatted report
+     */
     public static String prettyPrintLearnerReports(List<LearnerReport> reports) {
         StringBuilder sb = new StringBuilder();
         sb.append("\n+-------------------------------------------------+\n");
@@ -29,6 +35,12 @@ public class ReportPrinter {
         return sb.toString();
     }
 
+    /**
+     * Pretty print a learner report
+     *
+     * @param report report
+     * @return formatted report
+     */
     public static String prettyPrintLearnerReport(LearnerReport report) {
         return new StringBuilder()
                 .append("\n+-------------------------------------------------+\n")
@@ -55,6 +67,12 @@ public class ReportPrinter {
                 .toString();
     }
 
+    /**
+     * Pretty print a list of coach report
+     *
+     * @param reports reports
+     * @return formatted report
+     */
     public static String prettyPrintCoachReports(List<CoachReport> reports) {
         StringBuilder sb = new StringBuilder();
         sb.append("\n+-------------------------------------------------+\n");
@@ -74,6 +92,12 @@ public class ReportPrinter {
         return sb.toString();
     }
 
+    /**
+     * Pretty print a list of coach report
+     *
+     * @param coachReport report
+     * @return formatted report
+     */
     public static String prettyPrintCoachReport(CoachReport coachReport) {
         return new StringBuilder()
                 .append("\n+-------------------------------------------------+\n")
@@ -90,6 +114,12 @@ public class ReportPrinter {
                 .toString();
     }
 
+    /**
+     * format list of average rating
+     *
+     * @param averageRatingPerLesson list of average rating
+     * @return formatted rating
+     */
     private static String formatAverageRatingPerLesson(List<Map<Rating, Lesson>> averageRatingPerLesson) {
         if (averageRatingPerLesson.isEmpty()) {
             return "| None                                            |\n";
@@ -101,6 +131,12 @@ public class ReportPrinter {
                 .collect(Collectors.joining());
     }
 
+    /**
+     * Format a list of lesson
+     *
+     * @param lessons lesson
+     * @return formatted lesson
+     */
     private static String formatLessons(List<Lesson> lessons) {
         return lessons.isEmpty() ? "| None                                            |\n" :
                 lessons.stream()

@@ -145,6 +145,29 @@ class BookLessonUseCaseTest {
     }
 
     @Test
+    public void bookLesson_bookingCancelled_succeeds() {
+        Learner learner = new Learner("John doe", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
+
+        useCase.bookLesson(testLesson, learner); // book the lesson
+
+        learner.updateRegisteredLessonStatus(testLesson, LessonStatus.CANCELLED); // cancel the lesson
+
+        assertTrue(useCase.bookLesson(testLesson, learner).isSuccess()); // rebook the lesson
+    }
+
+    @Test
+    public void bookLesson_bookingCancelledSucceeds_LessonStatusUpdatedToBooked() {
+        Learner learner = new Learner("John doe", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
+
+        useCase.bookLesson(testLesson, learner); // book the lesson
+
+        learner.updateRegisteredLessonStatus(testLesson, LessonStatus.CANCELLED); // cancel the lesson
+        useCase.bookLesson(testLesson, learner);// rebook the lesson
+
+        assertEquals(LessonStatus.BOOKED, learner.getLessonStatus(testLesson));
+    }
+
+    @Test
     public void bookLesson_fullyBookedLessonWithOneCancelled_succeeds() {
         Learner learner1 = new Learner("John doe", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
         Learner learner2 = new Learner("John doe2", "Male", 5, passingTestGrade, validPhoneNumber, validPhoneNumber);
@@ -161,4 +184,5 @@ class BookLessonUseCaseTest {
 
         assertFalse(useCase.bookLesson(testLesson, learner5).isSuccess());
     }
+
 }

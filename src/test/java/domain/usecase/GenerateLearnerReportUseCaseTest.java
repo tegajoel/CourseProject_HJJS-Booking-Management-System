@@ -24,7 +24,7 @@ class GenerateLearnerReportUseCaseTest {
     void setUp() {
         learnerRepository = new LearnerRepositoryMock();
         useCase = new GenerateLearnerReportUseCase(learnerRepository);
-        learner = new Learner("John Paul", "Female", 5, 5, "", "");
+        learner = new Learner("John Paul", "Female", 5, 5, "", "").setId(123456);
     }
 
     @Test
@@ -136,9 +136,9 @@ class GenerateLearnerReportUseCaseTest {
         Lesson lesson4 = new Lesson("Diving4", 1, coach, LocalDate.now(), lessonTime);
 
 
-        Learner learner1 = new Learner("John Paul", "Female", 5, 5, "", "");
-        Learner learner2 = new Learner("Peter Paul", "Male", 5, 5, "", "");
-        Learner learner3 = new Learner("Samson Paul", "Female", 5, 5, "", "");
+        Learner learner1 = new Learner("John Paul", "Female", 5, 5, "", "").setId(123286);
+        Learner learner2 = new Learner("Peter Paul", "Male", 5, 5, "", "").setId(128456);
+        Learner learner3 = new Learner("Samson Paul", "Female", 5, 5, "", "").setId(122856);
 
         learner1.registerNewLesson(new RegisteredLesson(lesson1, LessonStatus.BOOKED));
         learner2.registerNewLesson(new RegisteredLesson(lesson2, LessonStatus.BOOKED));

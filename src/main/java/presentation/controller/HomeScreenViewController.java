@@ -21,8 +21,6 @@ import presentation.view.ReportPrinter;
 import presentation.view.components.optionpicker.OptionPickerStyle;
 import presentation.view.components.text.MessageType;
 
-import javax.swing.text.DateFormatter;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -712,5 +710,4 @@ public class HomeScreenViewController {
                 .toString();
         view.showMessage(msg, MessageType.INFO);
     }
-
 }

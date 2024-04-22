@@ -106,6 +106,42 @@ class RegisterNewLearnerUseCaseTest {
         assertEquals(RegisterNewLearnerUseCase.Error.INVALID_PHONE_NUMBER, result.getError());
     }
 
+    @Test
+    public void registerLearner_numberWithPlusSignAtStart_successReturned() {
+        validLearner.setPhoneNumber("+448012345680");
+        assertTrue(useCase.registerLearner(validLearner).isSuccess());
+    }
+
+    @Test
+    public void registerLearner_emergencyNumberWithPlusSignAtStart_successReturned() {
+        validLearner.setEmergencyContactNumber("+448012345680");
+        assertTrue(useCase.registerLearner(validLearner).isSuccess());
+    }
+
+    @Test
+    public void registerLearner_numberWithPlusSignInMiddle_fails() {
+        validLearner.setPhoneNumber("4480+12345680");
+        assertFalse(useCase.registerLearner(validLearner).isSuccess());
+    }
+
+    @Test
+    public void registerLearner_emergencyNumberWithPlusSignInMiddle_fails() {
+        validLearner.setEmergencyContactNumber("4480+12345680");
+        assertFalse(useCase.registerLearner(validLearner).isSuccess());
+    }
+
+    @Test
+    public void registerLearner_emergencyNumberWithPlusSignInMiddle_failsWithCorrectError() {
+        validLearner.setEmergencyContactNumber("4480+12345680");
+        assertEquals(RegisterNewLearnerUseCase.Error.INVALID_PHONE_NUMBER, useCase.registerLearner(validLearner).getError());
+    }
+
+    @Test
+    public void registerLearner_numberWithPlusSignInMiddle_failsWithCorrectError() {
+        validLearner.setPhoneNumber("4480+12345680");
+        assertEquals(RegisterNewLearnerUseCase.Error.INVALID_PHONE_NUMBER, useCase.registerLearner(validLearner).getError());
+    }
+
 
     private static class LearnersRepositoryMock implements LearnerRepository {
         private final List<Learner> learners = new ArrayList<>();

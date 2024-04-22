@@ -65,9 +65,9 @@ public class RegisterNewLearnerUseCase {
         public boolean validatePhoneNumber(String phoneNumber) {
             if (phoneNumber == null || phoneNumber.isBlank()) return false;
 
-            if (phoneNumber.length() != 11) return false;
+            if (phoneNumber.length() < 11) return false;
 
-            return phoneNumber.matches("\\d+");
+            return phoneNumber.matches("\\+?[0-9]+");
         }
 
         public boolean validateGender(String gender){

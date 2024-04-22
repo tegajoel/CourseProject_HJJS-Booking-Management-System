@@ -130,6 +130,8 @@ public class HomeScreenViewController {
         );
 
         view.showOptionsPicker(menuOptions, OptionPickerStyle.VERTICAL_WITH_EXIT_APP_OPTION, "Main menu", (index, value) -> {
+            view.showMessage("\n----- * " + value + " * -----\n", MessageType.INFO);
+
             switch (index) {
                 case 0 -> onRegisterNewUser();
                 case 1 -> onBookSwimmingLesson();

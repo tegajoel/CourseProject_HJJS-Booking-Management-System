@@ -148,10 +148,6 @@ public class HomeScreenView implements CLIView {
             sb.append("==> ");
             sb.append(message);
             if (addNewLine) sb.append("\n");
-        } else if (style == Style.INPUT_SELECTION) {
-            sb.append("************************");
-            sb.append("** ").append(message);
-            sb.append("************************");
         } else {
             sb.append(message);
             if (addNewLine) sb.append("\n");
@@ -171,6 +167,6 @@ public class HomeScreenView implements CLIView {
      * Internal message style
      */
     private enum Style {
-        NORMAL, RECEIVED, SENT, INPUT_SELECTION
+        NORMAL, RECEIVED, SENT
     }
 }

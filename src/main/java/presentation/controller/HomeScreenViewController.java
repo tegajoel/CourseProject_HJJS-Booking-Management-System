@@ -72,6 +72,9 @@ public class HomeScreenViewController {
     }
 
 
+    /**
+     * Do initializations
+     */
     private void initialize() {
         String appHeader = """
 
@@ -116,6 +119,9 @@ public class HomeScreenViewController {
         showMainMenuOptions();
     }
 
+    /**
+     * Show the main menu options
+     */
     private void showMainMenuOptions() {
         List<String> menuOptions = List.of(
                 "Register a new Learner",
@@ -146,91 +152,97 @@ public class HomeScreenViewController {
         });
     }
 
+    /**
+     * call when user selects the option to book a swimming lesson
+     */
     private void onBookSwimmingLesson() {
         requestLearnerById(learner -> requestLessonFromAllLessons(lesson -> doBookLesson(lesson, learner)));
     }
 
+    /**
+     * call when user selects the option to register a new user
+     */
     private void onRegisterNewUser() {
-        view.showMessage("We'll need some details to get you registered", MessageType.INFO);
+        view.showMessage("We'll need you to provide some details for registration", MessageType.INFO);
 
+        resetRegistrationDetails();
+        view.requestUserInput("Learner's name", data -> {
+            if (data.isBlank()) {
+                return Result.error("Please enter a name");
+            }
+            nameBeingRegistered = data;
+            return InputConsumer.success;
+        });
         if (nameBeingRegistered == null) {
-            view.requestUserInput("Learner's name", data -> {
-                if (data.isBlank()) {
-                    return Result.error("Please enter a name");
-                }
-                nameBeingRegistered = data;
-                return InputConsumer.success;
-            });
         }
 
+        view.showOptionsPicker(List.of("Male", "Female"), OptionPickerStyle.HORIZONTAL, "Learner's gender", (index, value) -> {
+            genderBeingRegistered = value;
+        });
         if (genderBeingRegistered == null) {
-            view.showOptionsPicker(List.of("Male", "Female"), OptionPickerStyle.HORIZONTAL, "Learner's gender", (index, value) -> {
-                genderBeingRegistered = value;
-            });
         }
 
+        view.requestUserInput("Learner's age", data -> {
+            try {
+                ageBeingRegistered = Integer.parseInt(data);
+                if (!registerNewLearnerUseCase.getValidator().validateAge(ageBeingRegistered)) {
+                    return Result.error("Only ages 4 to 11 can be registered");
+                }
+                return InputConsumer.success;
+            } catch (Exception e) {
+                return Result.error("Age must be a numeric value");
+            }
+        });
         if (ageBeingRegistered == null) {
-            view.requestUserInput("Learner's age", data -> {
-                try {
-                    ageBeingRegistered = Integer.parseInt(data);
-                    if (!registerNewLearnerUseCase.getValidator().validateAge(ageBeingRegistered)) {
-                        return Result.error("Only ages 4 to 11 can be registered");
-                    }
-                    return InputConsumer.success;
-                } catch (Exception e) {
-                    return Result.error("Age must be a numeric value");
-                }
-            });
         }
 
-        if (gradeBeingRegistered == null) {
-            view.requestUserInput("Do you have any swimming experience? [y/n]", data -> {
-                if (data.trim().equalsIgnoreCase("n") || data.trim().equalsIgnoreCase("no")) {
-                    gradeBeingRegistered = 0;
-                    return InputConsumer.success;
-                } else if (data.trim().equalsIgnoreCase("y") || data.trim().equalsIgnoreCase("yes")) {
-                    view.requestUserInput("Please enter your swimming level [0-5]", data2 -> {
-                        try {
-                            gradeBeingRegistered = Integer.parseInt(data2);
-                            if (!registerNewLearnerUseCase.getValidator().validateGrade(gradeBeingRegistered)) {
-                                return Result.error("Swimming level should be between 0 and 5");
-                            }
-                            return InputConsumer.success;
-                        } catch (Exception e) {
-                            return Result.error("Swimming level must be a numeric value");
+        view.requestUserInput("Do you have any swimming experience? [y/n]", data -> {
+            if (data.trim().equalsIgnoreCase("n") || data.trim().equalsIgnoreCase("no")) {
+                gradeBeingRegistered = 0;
+                return InputConsumer.success;
+            } else if (data.trim().equalsIgnoreCase("y") || data.trim().equalsIgnoreCase("yes")) {
+                view.requestUserInput("Please enter your swimming level [0-5]", data2 -> {
+                    try {
+                        gradeBeingRegistered = Integer.parseInt(data2);
+                        if (!registerNewLearnerUseCase.getValidator().validateGrade(gradeBeingRegistered)) {
+                            return Result.error("Swimming level should be between 0 and 5");
                         }
-                    });
-                    return InputConsumer.success;
-                } else {
-                    return Result.error("Please enter 'y' or 'n'");
-                }
-            });
+                        return InputConsumer.success;
+                    } catch (Exception e) {
+                        return Result.error("Swimming level must be a numeric value");
+                    }
+                });
+                return InputConsumer.success;
+            } else {
+                return Result.error("Please enter 'y' or 'n'");
+            }
+        });
+        if (gradeBeingRegistered == null) {
         }
 
+        view.requestUserInput("Learner's phone number", data -> {
+            phoneNumberBeingRegistered = data;
+            if (!registerNewLearnerUseCase.getValidator().validatePhoneNumber(phoneNumberBeingRegistered)) {
+                return Result.error("Please enter a valid phone number that is 11 digits. e.g 07874813069");
+            }
+            return InputConsumer.success;
+        });
         if (phoneNumberBeingRegistered == null) {
-            view.requestUserInput("Learner's phone number", data -> {
-                phoneNumberBeingRegistered = data;
-                if (!registerNewLearnerUseCase.getValidator().validatePhoneNumber(phoneNumberBeingRegistered)) {
-                    return Result.error("Please enter a valid phone number that is 11 digits. e.g 07874813069");
-                }
-                return InputConsumer.success;
-            });
         }
 
+        view.requestUserInput("Learner's emergency Contact number", data -> {
+            emergencyContactBeingRegistered = data;
+            if (!registerNewLearnerUseCase.getValidator().validatePhoneNumber(emergencyContactBeingRegistered)) {
+                return Result.error("Please enter a valid phone number that is 11 digits. e.g 07874813069");
+            }
+            return InputConsumer.success;
+        });
         if (emergencyContactBeingRegistered == null) {
-            view.requestUserInput("Learner's emergency Contact number", data -> {
-                emergencyContactBeingRegistered = data;
-                if (!registerNewLearnerUseCase.getValidator().validatePhoneNumber(emergencyContactBeingRegistered)) {
-                    return Result.error("Please enter a valid phone number that is 11 digits. e.g 07874813069");
-                }
-                return InputConsumer.success;
-            });
         }
 
         Learner learner = new Learner(nameBeingRegistered, genderBeingRegistered, ageBeingRegistered, gradeBeingRegistered, phoneNumberBeingRegistered, emergencyContactBeingRegistered);
 
         var result = registerNewLearnerUseCase.registerLearner(learner);
-        resetRegistrationDetails();
 
         if (result.isSuccess()) {
             printSuccessfulLearnerRegistrationDetails(learner);
@@ -248,6 +260,9 @@ public class HomeScreenViewController {
         showMainMenuOptions();
     }
 
+    /**
+     * call when user selects the option to attend a lesson
+     */
     private void onAttendSwimmingLesson() {
         requestLearnerById(learner -> {
 
@@ -275,6 +290,9 @@ public class HomeScreenViewController {
         });
     }
 
+    /**
+     * call when user selects the option to manage/cancel a booking
+     */
     private void onManageOrCancelBooking() {
         requestLearnerById(learner -> {
 
@@ -342,6 +360,9 @@ public class HomeScreenViewController {
         });
     }
 
+    /**
+     * call when user selects the option to print coach report
+     */
     private void onPrintCoachReport() {
         var options = List.of("Print for all coaches", "Print for a specific coach");
         view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, null, (index, value) -> {
@@ -359,6 +380,9 @@ public class HomeScreenViewController {
         });
     }
 
+    /**
+     * call when user selects the option to print learner report
+     */
     private void onPrintLearnerReport() {
         var options = List.of("Print for all learners", "Print for a specific learner");
         view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, null, (index, value) -> {
@@ -376,6 +400,9 @@ public class HomeScreenViewController {
         });
     }
 
+    /**
+     * call when user selects the option to display all learners
+     */
     private void onDisplayAllLearners() {
         var learners = learnerRepository.getAllLearners();
         if (learners.isEmpty()) {
@@ -394,6 +421,12 @@ public class HomeScreenViewController {
         showExitOrMainMenuOption();
     }
 
+    /**
+     * Do attending of a lesson with use case
+     *
+     * @param lesson  lesson
+     * @param learner learner
+     */
     private void doAttendLesson(Lesson lesson, Learner learner) {
         var result = attendLessonUseCase.attendLesson(lesson, learner, this::provideLessonReview);
 
@@ -412,6 +445,12 @@ public class HomeScreenViewController {
         showExitOrMainMenuOption();
     }
 
+    /**
+     * Do the booking of a lesson with use case
+     *
+     * @param lesson  lesson
+     * @param learner learner
+     */
     private void doBookLesson(Lesson lesson, Learner learner) {
         var result = bookLessonUseCase.bookLesson(lesson, learner);
 
@@ -434,11 +473,17 @@ public class HomeScreenViewController {
         }
     }
 
+    /**
+     * Close the app
+     */
     private void closeApp() {
         view.showMessage("Exiting...", MessageType.INFO);
         System.exit(0);
     }
 
+    /**
+     * Show the option to exit or go to the main menu
+     */
     private void showExitOrMainMenuOption() {
         var options = List.of("Return to Main menu");
         view.showOptionsPicker(options, OptionPickerStyle.VERTICAL_WITH_EXIT_APP_OPTION, null, (index, value) -> {
@@ -448,6 +493,12 @@ public class HomeScreenViewController {
         });
     }
 
+    /**
+     * Request the learner to enter their id and return the learner.
+     * The consumer will only br called if the id is valid and the learner is found in the repo
+     *
+     * @param consumer consumer to consume the found learner
+     */
     private void requestLearnerById(Consumer<Learner> consumer) {
         view.requestUserInput("Please enter a learner ID", data -> {
             if (data.trim().equals("0")) {
@@ -471,6 +522,14 @@ public class HomeScreenViewController {
         });
     }
 
+    /**
+     * Request the user to pick a lesson from the list of all lessons in the lesson list
+     *
+     * @param message            prompt message
+     * @param lessons            list of lesson that the user will choose from
+     * @param showLessonCapacity whether to display the lesson capacity
+     * @param lessonConsumer     consumer to consume the selected lesson
+     */
     private void requestPickFromLessons(
             String message,
             List<Lesson> lessons,
@@ -485,6 +544,11 @@ public class HomeScreenViewController {
         );
     }
 
+    /**
+     * Request the user to pick a lesson from the list of all lessons in the repo
+     *
+     * @param lessonConsumer consumer for the lesson
+     */
     private void requestLessonFromAllLessons(Consumer<Lesson> lessonConsumer) {
         showOptionToPickLessonFromAllLessons(lessons -> {
             if (lessons.isEmpty()) {
@@ -497,6 +561,13 @@ public class HomeScreenViewController {
         });
     }
 
+    /**
+     * Show the option the user to pick a lesson from the list of all lessons in the repo
+     * <p>
+     * This will first prompt the user to select a filter option
+     *
+     * @param caller consumer for the lessons
+     */
     private void showOptionToPickLessonFromAllLessons(Consumer<List<Lesson>> caller) {
         var options = List.of("By Swimming Grade", "By Coach", "By Day");
         view.showOptionsPicker(
@@ -512,6 +583,11 @@ public class HomeScreenViewController {
                 });
     }
 
+    /**
+     * Get a list lesson filtered by grade, from the list of all lessons in the repo
+     *
+     * @param caller consumer for the lessons
+     */
     private void onFilterLessonByGrade(Consumer<List<Lesson>> caller) {
         view.requestUserInput("Please enter a grade level [1-5]", data -> {
             try {
@@ -530,6 +606,11 @@ public class HomeScreenViewController {
         });
     }
 
+    /**
+     * Get a list lesson filtered by day, from the list of all lessons in the repo
+     *
+     * @param caller consumer for the lessons
+     */
     private void onFilterLessonByDay(Consumer<List<Lesson>> caller) {
         view.requestUserInput("Please a week day e.g Wednesday", data -> {
             var result = filterLessonsUseCase.filterByDay(data);
@@ -542,6 +623,11 @@ public class HomeScreenViewController {
         });
     }
 
+    /**
+     * Get a list lesson filtered by coach, from the list of all lessons in the repo
+     *
+     * @param caller consumer for the lessons
+     */
     private void onFilterLessonByCoach(Consumer<List<Lesson>> caller) {
         view.requestUserInput("Please the name of the coach. 0 to show all coaches", data -> {
             if (data.trim().equals("0")) {
@@ -567,12 +653,24 @@ public class HomeScreenViewController {
         });
     }
 
+    /**
+     * Request the user to pick a coach from the list of all coaches in the coach repo
+     *
+     * @param headerMessage message to be displayed to the user when prompting
+     * @param consumer      consume the selected coach
+     */
     private void getCoachFromAllCoaches(String headerMessage, Consumer<Coach> consumer) {
         List<Coach> coaches = coachRepository.getAllCoaches();
         List<String> options = coaches.stream().map(this::getCoachDetails).toList();
         view.showOptionsPicker(options, OptionPickerStyle.VERTICAL, headerMessage, (index, value) -> consumer.accept(coaches.get(index)));
     }
 
+    /**
+     * Get the details of a coach to be displayed
+     *
+     * @param coach coach
+     * @return coach details
+     */
     private String getCoachDetails(Coach coach) {
         Rating averageRating = LessonUtil.getAverageRating(coach.getAssignedLessons().
                 stream().map(lesson -> LessonUtil.getAverageReviewRating(lesson.getReviews()))
@@ -581,6 +679,13 @@ public class HomeScreenViewController {
         return coach.getName() + " (Average Rating: " + (averageRating.hasRating() ? averageRating.getRatingValue() : "No rating yet") + ")";
     }
 
+    /**
+     * Get the details of a lesson to be displayed
+     *
+     * @param lesson             lesson
+     * @param showLessonCapacity whether to include the lesson capacity
+     * @return the lesson details
+     */
     private String getLessonDetails(Lesson lesson, boolean showLessonCapacity) {
         Rating averageRating = LessonUtil.getAverageReviewRating(lesson.getReviews());
         StringBuilder sb = new StringBuilder();
@@ -598,6 +703,11 @@ public class HomeScreenViewController {
         return sb.toString();
     }
 
+    /**
+     * Request the user to provide a review
+     *
+     * @return review object
+     */
     private Review provideLessonReview() {
         final boolean[] hasCompletedReview = {false};
         Review review = new Review("", 0);
@@ -626,10 +736,22 @@ public class HomeScreenViewController {
 
     }
 
+    /**
+     * format lesson date to be displayed
+     *
+     * @param lesson lesson
+     * @return formatted date
+     */
     private String formatLessonDate(Lesson lesson) {
         return lesson.getLessonDate().format(DateTimeFormatter.ofPattern("EEEE - MMMM d", Locale.ENGLISH));
     }
 
+    /**
+     * display a message on successfully booked lesson
+     *
+     * @param lesson  lesson
+     * @param learner learner
+     */
     private void printBookingDetails(Learner learner, Lesson lesson) {
         StringBuilder sb = new StringBuilder();
         sb.append("\n+-------------------------------------------------+\n");
@@ -651,6 +773,11 @@ public class HomeScreenViewController {
         view.showMessage(sb.toString(), MessageType.INFO);
     }
 
+    /**
+     * display a message on successful registration
+     *
+     * @param learner learner
+     */
     private void printSuccessfulLearnerRegistrationDetails(Learner learner) {
 
         var message = new StringBuilder()
@@ -673,6 +800,12 @@ public class HomeScreenViewController {
         view.showMessage(message, MessageType.INFO);
     }
 
+    /**
+     * display a message on successful attended lesson
+     *
+     * @param lesson  lesson
+     * @param learner learner
+     */
     private void printSuccessfulLessonAttendedMsg(Lesson lesson, Learner learner) {
         StringBuilder sb = new StringBuilder();
         sb.append("\n+-------------------------------------------------+\n");
@@ -686,6 +819,9 @@ public class HomeScreenViewController {
         view.showMessage(sb.toString(), MessageType.INFO);
     }
 
+    /**
+     * Reset details used in registration
+     */
     private void resetRegistrationDetails() {
         nameBeingRegistered = null;
         genderBeingRegistered = null;
@@ -695,6 +831,11 @@ public class HomeScreenViewController {
         emergencyContactBeingRegistered = null;
     }
 
+    /**
+     * print learner details
+     *
+     * @param learner learner
+     */
     private void printLearnerDetails(Learner learner) {
         String msg = new StringBuilder()
                 .append("\n+-------------------------------------------------+\n")

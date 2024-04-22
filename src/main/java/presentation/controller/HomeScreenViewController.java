@@ -1,7 +1,5 @@
 package presentation.controller;
 
-import data.InMemLearnersRepository;
-import data.InMemLessonRepository;
 import domain.entity.Rating;
 import domain.entity.Review;
 import domain.entity.coach.Coach;
@@ -12,7 +10,6 @@ import domain.entity.lesson.RegisteredLesson;
 import domain.repository.CoachRepository;
 import domain.repository.LearnerRepository;
 import domain.usecase.*;
-import domain.util.IdGenerator;
 import domain.util.LessonUtil;
 import domain.util.Result;
 import presentation.view.CLIView;
@@ -21,7 +18,6 @@ import presentation.view.ReportPrinter;
 import presentation.view.components.optionpicker.OptionPickerStyle;
 import presentation.view.components.text.MessageType;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
@@ -85,37 +81,6 @@ public class HomeScreenViewController {
 
         view.showMessage(appHeader, MessageType.INFO);
 
-        Coach coach1 = new Coach("Peter");
-        Coach coach2 = new Coach("John");
-        coachRepository.addNewCoach(coach1);
-        coachRepository.addNewCoach(coach2);
-
-        Lesson lesson = new Lesson("Diving 1", 3, coach1, LocalDate.now(), "3-4pm");
-        Lesson lesson2 = new Lesson("Diving 2", 3, coach1, LocalDate.now(), "4-5pm");
-        Lesson lesson3 = new Lesson("Diving 3", 4, coach2, LocalDate.now(), "6-7pm");
-        Lesson lesson4 = new Lesson("Diving 4", 2, coach1, LocalDate.now(), "3-4pm");
-
-        lesson.setId(IdGenerator.generateId(lesson));
-        lesson2.setId(IdGenerator.generateId(lesson2));
-        lesson3.setId(IdGenerator.generateId(lesson3));
-        lesson4.setId(IdGenerator.generateId(lesson4));
-        Learner learner = new Learner("Paul", "Male", 6, 3, "0819ja", "0819ja",
-                List.of(new RegisteredLesson(lesson, LessonStatus.BOOKED), new RegisteredLesson(lesson2, LessonStatus.ATTENDED))).setId(1234);
-
-        Learner learner1 = new Learner("Simon", "Male", 6, 2, "0819ja", "0819ja",
-                List.of(new RegisteredLesson(lesson, LessonStatus.BOOKED), new RegisteredLesson(lesson3, LessonStatus.ATTENDED))).setId(123);
-
-
-        InMemLearnersRepository.getInstance().addNewLearner(learner1);
-        InMemLearnersRepository.getInstance().addNewLearner(learner);
-
-        lesson3.addLearner(learner1);
-        lesson.addLearner(learner1);
-        lesson.addLearner(learner);
-        lesson2.addLearner(learner);
-
-        InMemLessonRepository.getInstance().addLessons(List.of(lesson2, lesson3, lesson4, lesson));
-
         showMainMenuOptions();
     }
 
@@ -173,14 +138,10 @@ public class HomeScreenViewController {
             nameBeingRegistered = data;
             return InputConsumer.success;
         });
-        if (nameBeingRegistered == null) {
-        }
-
-        view.showOptionsPicker(List.of("Male", "Female"), OptionPickerStyle.HORIZONTAL, "Learner's gender", (index, value) -> {
-            genderBeingRegistered = value;
-        });
-        if (genderBeingRegistered == null) {
-        }
+        view.showOptionsPicker(List.of("Male", "Female"),
+                OptionPickerStyle.HORIZONTAL,
+                "Learner's gender",
+                (index, value) -> genderBeingRegistered = value);
 
         view.requestUserInput("Learner's age", data -> {
             try {
@@ -193,8 +154,6 @@ public class HomeScreenViewController {
                 return Result.error("Age must be a numeric value");
             }
         });
-        if (ageBeingRegistered == null) {
-        }
 
         view.requestUserInput("Do you have any swimming experience? [y/n]", data -> {
             if (data.trim().equalsIgnoreCase("n") || data.trim().equalsIgnoreCase("no")) {
@@ -217,8 +176,6 @@ public class HomeScreenViewController {
                 return Result.error("Please enter 'y' or 'n'");
             }
         });
-        if (gradeBeingRegistered == null) {
-        }
 
         view.requestUserInput("Learner's phone number", data -> {
             phoneNumberBeingRegistered = data;
@@ -227,8 +184,6 @@ public class HomeScreenViewController {
             }
             return InputConsumer.success;
         });
-        if (phoneNumberBeingRegistered == null) {
-        }
 
         view.requestUserInput("Learner's emergency Contact number", data -> {
             emergencyContactBeingRegistered = data;
@@ -237,8 +192,6 @@ public class HomeScreenViewController {
             }
             return InputConsumer.success;
         });
-        if (emergencyContactBeingRegistered == null) {
-        }
 
         Learner learner = new Learner(nameBeingRegistered, genderBeingRegistered, ageBeingRegistered, gradeBeingRegistered, phoneNumberBeingRegistered, emergencyContactBeingRegistered);
 
@@ -273,14 +226,7 @@ public class HomeScreenViewController {
 
             if (bookedLessons.isEmpty()) {
                 view.showMessage("You don't have any booked lesson to attend", MessageType.ERROR);
-                var options = List.of("Book a lesson", "Return to Main menu", "Exit App");
-                view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, "Choose an option", (index, value) -> {
-                    switch (index) {
-                        case 0 -> onBookSwimmingLesson();
-                        case 1 -> showMainMenuOptions();
-                        case 2 -> closeApp();
-                    }
-                });
+                showBookLessonOrExitToMainMenuOption();
             } else {
                 requestPickFromLessons(
                         "Please select from one of your booked lesson to attend",
@@ -305,14 +251,7 @@ public class HomeScreenViewController {
                 var msg = learner.getRegisteredLessons().isEmpty() ? "You have not yet booked any lesson to cancel or amend"
                         : "You have attended all you booked lessons, and you can only amend lessons that you have not attended.";
                 view.showMessage(msg, MessageType.ERROR);
-                var options = List.of("Book a lesson", "Return to Main menu", "Exit App");
-                view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, "Choose an option", (index, value) -> {
-                    switch (index) {
-                        case 0 -> onBookSwimmingLesson();
-                        case 1 -> showMainMenuOptions();
-                        case 2 -> closeApp();
-                    }
-                });
+                showBookLessonOrExitToMainMenuOption();
             } else {
                 var options = filteredLessons
                         .stream()
@@ -489,6 +428,20 @@ public class HomeScreenViewController {
         view.showOptionsPicker(options, OptionPickerStyle.VERTICAL_WITH_EXIT_APP_OPTION, null, (index, value) -> {
             if (index == 0) {
                 showMainMenuOptions();
+            }
+        });
+    }
+
+    /**
+     * Show the option to book a lesson, return to main menu, or exit the app
+     */
+    private void showBookLessonOrExitToMainMenuOption() {
+        var options = List.of("Book a lesson", "Return to Main menu", "Exit App");
+        view.showOptionsPicker(options, OptionPickerStyle.HORIZONTAL, "Choose an option", (index, value) -> {
+            switch (index) {
+                case 0 -> onBookSwimmingLesson();
+                case 1 -> showMainMenuOptions();
+                case 2 -> closeApp();
             }
         });
     }

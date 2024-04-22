@@ -6,6 +6,4 @@ import org.junit.runner.RunWith;
 @RunWith(org.junit.platform.runner.JUnitPlatform.class)
 @SuiteDisplayName("JUnit Platform Suite Demo")
 @SelectPackages({"domain", "presentation"})
-public class MainTestSuite {
-
-}
+public class TestSuiteMain {}
